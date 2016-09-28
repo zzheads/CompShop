@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="_csrf_parameterName" th:content="${_csrf.parameterName}"/>
+    <title>CompShop</title>
+    <link rel="stylesheet" type="text/css" href="../assets/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/unsemantic-grid-responsive.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/styles.css" />
+</head>
+<body>
+
+
+<div class="container">
+
+    <nav th:fragment="nav">
+        <div class="grid-100">
+            <div class="prefix-20 grid-30 align-left">
+                <a href="/">
+                    <img src="../assets/images/logo.png" height="40px" align="middle"/>
+                </a>
+            </div>
+            <div class="grid-30 suffix-20 vertical-center">
+                <p>
+                    <a sec:authorize="hasAnyRole('ADMIN', 'DEVELOPER')" th:href="@{/admin}">
+                        <span>admin panel</span> &bullet;
+                    </a>
+                    <span>
+                        <a sec:authorize="isAuthenticated()" th:href="@{/profile}" th:text="${loggedUsername}">Chris Ramazzotti</a>
+                        <a sec:authorize="isAnonymous()" th:href="@{/signup}">зарегистрироваться</a>
+                    </span>
+                        &bullet;
+                    <span>
+                        <a sec:authorize="isAuthenticated()" th:href="@{/logout}">выйти</a>
+                        <a sec:authorize="isAnonymous()" th:href="@{/login}">войти</a>
+                    </span>
+                </p>
+            </div>
+        </div>
+    </nav>
+
+    <div th:fragment="menu" class="dark-box">
+        <div class="grid-100 ">
+            <div class="prefix-20 grid-60 suffix-20">
+                <table>
+                    <tr>
+                        <td style="vertical-align:middle">
+                            <a href="#" onclick="showAStore()"> aStore </a>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <input type="text" placeholder="Поиск" class="simple-input center" oninput="searchProducts(this.value)"/>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <a href="#" onclick="showAbout()"> О нас </a>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                                <select id="selectCategory" onchange="getSelectedCategory(this.value)">
+                                    <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}"></option>
+                                </select>
+                            </div>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                                <a href="#" onclick="showAStore()">
+                                    aStore
+                                </a>
+                            </div>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                                <a href="#" onclick="showAStore()">
+                                    aStore
+                                </a>
+                            </div>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                                <a href="#" onclick="showAStore()">
+                                    aStore
+                                </a>
+                            </div>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                                <a href="#" onclick="showAStore()">
+                                    aStore
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="header" class="orange-box">
+        <div class="grid-100">
+            <div class="prefix-75 grid-10 suffix-15">
+                <a href="#" onclick="checkShoppingCart()">
+                    <span th:inline="text" id="shoppingCart">[[@{'$'+${total}}]]</span>
+                    <img src="../assets/images/empty-cart-light.png" height="30px" align="middle"/>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="header_admin" class="orange-box">
+        <div class="grid-100">
+            <div class="prefix-75 grid-10 suffix-15">
+                <span th:inline="text" id="countProducts">[[@{${count}+' products'}]]</span>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="menu_admin" class="dark-box">
+        <div class="grid-100 ">
+            <div class="prefix-20 grid-60 suffix-20">
+                <table>
+                    <tr>
+                        <td style="vertical-align:middle">
+                            <input id="keywords" type="text" placeholder="keywords" class="simple-input center"/>
+                        </td>
+                        <td>
+                            <p> </p>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <select id="indexSearch">
+                                <option>Wireless</option>
+                                <option selected="selected">PCHardware</option>
+                                <option>All</option>
+                                <option>UnboxVideo</option>
+                                <option>Appliances</option>
+                                <option>ArtsAndCrafts</option>
+                                <option>Automotive</option>
+                                <option>Baby</option>
+                                <option>Beauty</option>
+                                <option>Books</option>
+                                <option>Music</option>
+                                <option>Fashion</option>
+                                <option>FashionBaby</option>
+                                <option>FashionBoys</option>
+                                <option>FashionGirls</option>
+                                <option>FashionMen</option>
+                                <option>FashionWomen</option>
+                                <option>Collectibles</option>
+                                <option>MP3Downloads</option>
+                                <option>Electronics</option>
+                                <option>GiftCards</option>
+                                <option>Grocery</option>
+                                <option>HealthPersonalCare</option>
+                                <option>HomeGarden</option>
+                                <option>Industrial</option>
+                                <option>KindleStore</option>
+                                <option>Luggage</option>
+                                <option>Magazines</option>
+                                <option>Movies</option>
+                                <option>MusicalInstruments</option>
+                                <option>OfficeProducts</option>
+                                <option>LawnAndGarden</option>
+                                <option>PetSupplies</option>
+                                <option>Pantry</option>
+                                <option>Software</option>
+                                <option>SportingGoods</option>
+                                <option>Tools</option>
+                                <option>Toys</option>
+                                <option>VideoGames</option>
+                                <option>Wine</option>
+                                <option>Blended</option>
+                            </select>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <a href="#" onclick="getFromAmazon()"> Get from Amazon </a>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                                <button class="mac" onclick="applyToBase()">Apply</button>
+                            </div>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                            </div>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                            </div>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                            </div>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <div class="grid-30">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="flashMessage" th:fragment="flash" class="grid-100">
+        <div th:if="${flash != null}" class="grid-100 row controls">
+            <div class="message">
+                <div th:classappend="${#strings.toLowerCase(flash.status)}" class="flash">
+
+                    <p th:inline="text">
+                        <a href="#"><span onclick="clearFlash()" class="flashspan"> [X]</span></a>
+                        [[${flash.message}]]
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="../assets/scripts/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
