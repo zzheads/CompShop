@@ -1,0 +1,14 @@
+# Created by .ignore support plugin (hsz.mobi)
+.DS_Store
+.gitignore
+.gradle/
+.idea/
+awscreds.txt
+build/
+out/
+src/.DS_Store
+src/main/.DS_Store
+src/main/java/.DS_Store
+src/main/resources/.DS_Store
+src/main/resources/static/.DS_Store
+src/main/resources/static/assets/.DS_Store
