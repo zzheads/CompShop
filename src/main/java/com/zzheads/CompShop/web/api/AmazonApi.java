@@ -23,6 +23,8 @@ public class AmazonApi {
     private final ProductService productService;
     private final AwsService awsService;
 
+    private static final int COUNT_RETRY_IF_BUSY = 10;
+
     @Autowired
     public AmazonApi(AddressService addressService, SupplierService supplierService, ProductService productService, AwsService awsService, CategoryService categoryService) {
         this.addressService = addressService;
@@ -40,8 +42,22 @@ public class AmazonApi {
 
     @RequestMapping(path = "/itemLookup/{asin}", method = RequestMethod.GET)
     public @ResponseBody String itemLookup (@PathVariable String asin) {
-        Product product = awsService.itemLookup(asin, "OfferSummary");
-        product.setPhoto(awsService.itemLookup(asin, "Images").getPhoto());
+        Product product = null, productImage = null;
+        int count = 0;
+        while (count<COUNT_RETRY_IF_BUSY) {
+            product = awsService.itemLookup(asin, "OfferSummary");
+            if (product != null) break;
+            count++;
+        }
+        count = 0;
+        while (count<COUNT_RETRY_IF_BUSY) {
+            productImage = awsService.itemLookup(asin, "Images");
+            if (productImage != null) break;
+            count++;
+        }
+        if (product == null) product = new Product();
+        if (productImage != null) product.setPhoto(productImage.getPhoto());
+        product.setAsin(asin);
         return product.toJson();
     }
 

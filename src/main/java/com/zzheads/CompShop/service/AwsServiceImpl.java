@@ -110,6 +110,7 @@ public class AwsServiceImpl implements AwsService {
     @Override
     public Product itemLookup(String asin, String responseGroup) {
         Product product = new Product();
+        product.setAsin(asin);
         Map<String, String> params = new HashMap<>();
         params.put("Operation", "ItemLookup");
         params.put("ResponseGroup", "ItemAttributes");
@@ -163,6 +164,7 @@ public class AwsServiceImpl implements AwsService {
     }
 
     private Node findChild (Node node, String childNodeName) {
+        if (node == null) return null;
         NodeList nodeList = node.getChildNodes();
         return findNode(nodeList, childNodeName);
     }

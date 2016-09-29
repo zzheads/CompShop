@@ -46,6 +46,14 @@ function printProductFromAmazon (product, count) {
         "<div class='grid-100'>"
         +"<div class='grid-10'>"
             +"<p id='asin#"+count+"'>"+product.asin+"</p>"
+            +"<meta name='name#"+product.asin+"' content='"+product.name+"'/>"
+            +"<meta name='description#"+product.asin+"' content='"+product.description+"'/>"
+            +"<meta name='height#"+product.asin+"' content='"+product.height+"'/>"
+            +"<meta name='length#"+product.asin+"' content='"+product.length+"'/>"
+            +"<meta name='width#"+product.asin+"' content='"+product.width+"'/>"
+            +"<meta name='weight#"+product.asin+"' content='"+product.weight+"'/>"
+            +"<meta name='units_l#"+product.asin+"' content='"+product.units_l+"'/>"
+            +"<meta name='units_w#"+product.asin+"' content='"+product.units_w+"'/>"
         +"</div>"
         +"<div class='grid-10'>"
             +"<img src='"+product.photo+"' height='30px'/>"
@@ -105,6 +113,24 @@ function applyToBase () {
             contentType: "application/json",
             headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
             success: function (product) {
+                if (product.purchase_price == null || product.photo == null) {
+                    printFlashMessage("Не удается получить информацию о продукте с ASIN="+product.asin, "failure");
+                }
+                product.name = getPropertyOfProduct("name", product.asin);
+                product.description = getPropertyOfProduct("description", product.asin);
+                product.height = getPropertyOfProduct("height", product.asin);
+                product.length = getPropertyOfProduct("length", product.asin);
+                product.width = getPropertyOfProduct("width", product.asin);
+                product.weight = getPropertyOfProduct("weight", product.asin);
+                product.units_l = getPropertyOfProduct("units_l", product.asin);
+                product.units_w = getPropertyOfProduct("units_w", product.asin);
+                product.supplier = {
+                    name: "amazon.com"
+                };
+                product.category = {
+                  name: "PCHardware"
+                };
+                console.log(product);
                 $.ajax({
                     url: "/product",
                     type: "POST",
@@ -135,4 +161,24 @@ function getAsins () {
             return asins;
         count++;
     }
+}
+
+function getProduct (asin) {
+    var product = {
+        asin : asin,
+        name: getPropertyOfProduct("name", asin),
+        description: getPropertyOfProduct("description", asin),
+        height: getPropertyOfProduct("height", asin),
+        length: getPropertyOfProduct("length", asin),
+        width: getPropertyOfProduct("width", asin),
+        weight: getPropertyOfProduct("weight", asin),
+        units_l: getPropertyOfProduct("units_l", asin),
+        units_w: getPropertyOfProduct("units_w", asin)
+    };
+    return product;
+}
+
+function getPropertyOfProduct (nameOfProperty, asin) {
+    var name = nameOfProperty+"#"+asin;
+    return $("meta[name='"+name+"']").attr("content");
 }

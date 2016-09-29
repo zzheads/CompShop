@@ -35,4 +35,9 @@ public class CategoryServiceImpl implements CategoryService {
     public void delete(Category category) {
         categoryDao.delete(category);
     }
+
+    @Override
+    public Category findByName(String name) {
+        return findAll().stream().filter(category -> category.getName().equals(name)).findFirst().orElse(null);
+    }
 }

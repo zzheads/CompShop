@@ -8,8 +8,9 @@ function getAllProducts() {
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (allProducts) {
             root.children().remove();
-            for (var i=0;i<allProducts.length;i++) {
-                root.append(getHtmlProduct(allProducts[i]));
+            if (allProducts!=null)
+                for (var i=0;i<allProducts.length;i++) {
+                    root.append(getHtmlProduct(allProducts[i]));
             }
         },
         error: getErrorMsg
