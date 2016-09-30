@@ -11,4 +11,6 @@ public interface QwintryService {
     JsonNode getCountries() throws Exception;
     JsonNode getLocations() throws Exception;
     JsonNode getHubs(String country) throws Exception;
+    JsonNode getProfile() throws Exception;
+    JsonNode getBalance() throws Exception;
 }

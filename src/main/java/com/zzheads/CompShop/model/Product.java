@@ -206,6 +206,33 @@ public class Product implements Serializable {
         this.unitsW = unitsW;
     }
 
+    public String get_weight () {
+        // weight in kg
+        double multiplier = 1.0;
+        switch (unitsW) {
+            case "":
+                break;
+            default:
+                break;
+        }
+        String result = Integer.toString((int) (weight*multiplier));
+        return result;
+    }
+
+    public String get_dimensions() {
+        // dimensions "HxLxW" in cm
+        double multiplier = 1.0;
+        switch (unitsL) {
+            case "hundreds inches":
+                multiplier = 10.0;
+                break;
+            default:
+                break;
+        }
+        String result = Integer.toString((int) (height*multiplier)) +"x"+ Integer.toString((int) (length*multiplier)) +"x"+ Integer.toString((int) (width*multiplier));
+        return result;
+    }
+
     static JsonArray toJsonShort(List<Product> src) {
         if (src != null) {
             JsonArray products = new JsonArray();

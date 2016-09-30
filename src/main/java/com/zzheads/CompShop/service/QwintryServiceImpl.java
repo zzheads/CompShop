@@ -1,17 +1,11 @@
 package com.zzheads.CompShop.service;
 
-import com.google.gson.JsonObject;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.apache.http.HttpException;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +21,21 @@ public class QwintryServiceImpl implements QwintryService {
         Unirest.setDefaultHeader("Authorization", "Bearer "+ API_KEY);
     }
 
+    private double getCost (HttpResponse<JsonNode> jsonResponse, String insurance) {
+        JSONObject jsonBody = jsonResponse.getBody().getObject();
+        boolean success = jsonBody.getBoolean("success");
+        JSONObject jsonResult = jsonBody.getJSONObject("result");
+        if (success && jsonResult != null) {
+            double insuranceCost = jsonResult.getDouble("insurance_cost");
+            double shippingCost = jsonResult.getDouble("shipping_cost");
+            if (insurance.equals("true"))
+                return insuranceCost + shippingCost;
+            else
+                return shippingCost;
+        }
+        return Double.NaN;
+    }
+
     @Override
     public double getCostPickup(String weight, String dimensions, String toPickup, String insurance, String value) throws Exception {
 
@@ -40,17 +49,7 @@ public class QwintryServiceImpl implements QwintryService {
 
         String url = BASE_URL+"/api/cost";
         HttpResponse<JsonNode> jsonResponse = Unirest.post(url).fields(params).asJson();
-        JSONObject result = jsonResponse.getBody().getObject();
-
-        if (result.getBoolean("success")) {
-            double insuranceCost = result.getDouble("insurance_cost");
-            double shippingCost = result.getDouble("shipping_cost");
-            if (insurance.equals("true"))
-                return shippingCost + insuranceCost;
-            else
-                return shippingCost;
-        }
-        return Double.NaN;
+        return getCost(jsonResponse, insurance);
     }
 
     @Override
@@ -72,17 +71,7 @@ public class QwintryServiceImpl implements QwintryService {
 
         String url = BASE_URL+"/api/cost";
         HttpResponse<JsonNode> jsonResponse = Unirest.post(url).fields(params).asJson();
-        JSONObject result = jsonResponse.getBody().getObject();
-
-        if (result.getBoolean("success")) {
-            double insuranceCost = result.getDouble("insurance_cost");
-            double shippingCost = result.getDouble("shipping_cost");
-            if (insurance.equals("true"))
-                return shippingCost + insuranceCost;
-            else
-                return shippingCost;
-        }
-        return Double.NaN;
+        return getCost(jsonResponse, insurance);
     }
 
     @Override
@@ -103,6 +92,20 @@ public class QwintryServiceImpl implements QwintryService {
     public JsonNode getHubs(String country) throws Exception {
         String url = BASE_URL+"/api/hubs-list";
         HttpResponse<JsonNode> jsonResponse = Unirest.get(url).queryString("country", country).asJson();
+        return jsonResponse.getBody();
+    }
+
+    @Override
+    public JsonNode getProfile() throws Exception {
+        String url = BASE_URL+"/api/profile";
+        HttpResponse<JsonNode> jsonResponse = Unirest.get(url).asJson();
+        return jsonResponse.getBody();
+    }
+
+    @Override
+    public JsonNode getBalance() throws Exception {
+        String url = BASE_URL+"/api/balance";
+        HttpResponse<JsonNode> jsonResponse = Unirest.get(url).asJson();
         return jsonResponse.getBody();
     }
 }

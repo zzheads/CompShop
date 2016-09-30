@@ -28,7 +28,7 @@ public class QwintryServiceImplTest {
 
     @Test
     public void testGet() throws Exception {
-        double kg = 0.01;
+        double kg = 1;
         double lb = kg/0.453592;
         double cost = qwintryService.getCostDelivery("qwair", Double.toString(lb), "10x10x10","DE1", "RU", "400005", "Батальоная 11-25", "", "Волгоград", "Волгоградская область", "false", "601");
     }
@@ -47,4 +47,15 @@ public class QwintryServiceImplTest {
     public void testGetHubs () throws Exception {
         JsonNode res = qwintryService.getHubs("us");
     }
+
+    @Test
+    public void testGetProfile() throws Exception {
+        JsonNode res = qwintryService.getProfile();
+    }
+
+    @Test
+    public void testGetBalance() throws Exception {
+        JsonNode res = qwintryService.getBalance();
+    }
+
 }
