@@ -18,13 +18,13 @@ import java.util.Map;
 @Service
 public class QwintryServiceImpl implements QwintryService {
     private final String RETAIL_PRICING = "1";
-    private final String API_KEY = "p3DdI_2ufOb3eHkDUUy8mPN36p4O9PTk";
     private final String BASE_URL = "http://logistics.qwintry.com";
-    private final String USER_AGENT = "Mozilla/5.0";
 
     QwintryServiceImpl() {
+        final String USER_AGENT = "Mozilla/5.0";
+        final String API_KEY = "p3DdI_2ufOb3eHkDUUy8mPN36p4O9PTk";
         Unirest.setDefaultHeader("User_Agent", USER_AGENT);
-        Unirest.setDefaultHeader("Authorization", "Bearer "+API_KEY);
+        Unirest.setDefaultHeader("Authorization", "Bearer "+ API_KEY);
     }
 
     @Override
