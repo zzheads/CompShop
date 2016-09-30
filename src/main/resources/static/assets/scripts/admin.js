@@ -19,15 +19,24 @@ function startAdmin(){
 
 function printProduct (product) {
     var htmlString =
-        "<div class='grid-100'>"
+        "<div id='product#"+product.id+"' class='grid-100'>"
             +"<div class='grid-5'>"
-                +"<p>"+product.id+"</p>"
+                +"<p>"+product.asin+"</p>"
             +"</div>"
-            +"<div class='grid-90'>"
+            +"<div class='grid-10'>"
+                +"<img src='"+product.photo+"' height='30px'/>"
+            +"</div>"
+            +"<div class='grid-30'>"
                 +"<p>"+product.name+"</p>"
+            +"</div>"
+            +"<div class='grid-30'>"
+                +"<p>"+product.description+"</p>"
             +"</div>"
             +"<div class='grid-5'>"
                 +"<p>$"+product.purchase_price+"</p>"
+            +"</div>"
+            +"<div class='grid-5'>"
+                +"<button id='"+product.id+"' class='mac' onclick='deleteProduct(this.id)'>[-]</button>"
             +"</div>"
         +"</div>";
     return htmlString;
@@ -181,4 +190,23 @@ function getProduct (asin) {
 function getPropertyOfProduct (nameOfProperty, asin) {
     var name = nameOfProperty+"#"+asin;
     return $("meta[name='"+name+"']").attr("content");
+}
+
+function deleteProduct (id) {
+    if (id != null) {
+        $.ajax({
+            url: "/product/" + id,
+            type: "DELETE",
+            dataType: "json",
+            contentType: "application/json",
+            headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
+            success: function () {
+                document.getElementById("product#" + id).remove();
+                printFlashMessage("Продукт (id=" + id + ") успешно удален из базы", "success");
+            },
+            error: getErrorMsg
+        });
+    } else {
+        printFlashMessage("Данный продукт еще не сохранен в базе. Невозможно удалить.", "failure");
+    }
 }

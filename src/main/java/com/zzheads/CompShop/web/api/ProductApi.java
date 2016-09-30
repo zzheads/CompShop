@@ -43,11 +43,16 @@ public class ProductApi {
         if (supplier == null) supplier = new Supplier(product.getSupplier().getName(), null, null);
         product.setCategory(category);
         product.setSupplier(supplier);
-        category.addProduct(product);
-        supplier.addProduct(product);
 
         productService.save(product);
         return product.toJson();
+    }
+
+    @RequestMapping(path = "/product/{id}", method = RequestMethod.DELETE, produces = {"application/json"})
+    @ResponseStatus (HttpStatus.NO_CONTENT)
+    public void delete (@PathVariable Long id) {
+        Product product = productService.findById(id);
+        if (product != null) productService.delete(product);
     }
 
     @RequestMapping(path = "/product/{id}", method = RequestMethod.GET, produces = {"application/json"})

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class AmazonApi {
@@ -41,22 +42,28 @@ public class AmazonApi {
     }
 
     @RequestMapping(path = "/itemLookup/{asin}", method = RequestMethod.GET)
-    public @ResponseBody String itemLookup (@PathVariable String asin) {
+    public @ResponseBody String itemLookup (@PathVariable String asin) throws InterruptedException {
         Product product = null, productImage = null;
         int count = 0;
         while (count<COUNT_RETRY_IF_BUSY) {
             product = awsService.itemLookup(asin, "OfferSummary");
             if (product != null) break;
             count++;
+            TimeUnit.SECONDS.sleep(1);
         }
         count = 0;
         while (count<COUNT_RETRY_IF_BUSY) {
             productImage = awsService.itemLookup(asin, "Images");
             if (productImage != null) break;
             count++;
+            TimeUnit.SECONDS.sleep(1);
         }
-        if (product == null) product = new Product();
-        if (productImage != null) product.setPhoto(productImage.getPhoto());
+        if (product == null) {
+            product = new Product();
+        }
+        if (productImage != null) {
+            product.setPhoto(productImage.getPhoto());
+        }
         product.setAsin(asin);
         return product.toJson();
     }

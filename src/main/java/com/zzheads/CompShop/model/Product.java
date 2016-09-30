@@ -38,11 +38,11 @@ public class Product implements Serializable {
     private double weight;
     private String unitsW;
 
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn (name = "supplier_id")
     private Supplier supplier;
 
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn (name = "category_id")
     private Category category;
 

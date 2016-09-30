@@ -74,6 +74,10 @@ public class Supplier implements Serializable {
         if (!products.contains(product)) products.add(product);
     }
 
+    public void removeProduct(Product product) {
+        if (products != null && products.contains(product)) products.remove(product);
+    }
+
     private class SupplierSerializer implements JsonSerializer<Supplier> {
         @Override
         public JsonElement serialize(Supplier src, Type typeOfSrc, JsonSerializationContext context) {
