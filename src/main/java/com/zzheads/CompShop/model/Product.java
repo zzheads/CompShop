@@ -29,6 +29,8 @@ public class Product implements Serializable {
 
     private double retailPrice;
 
+    private double deliveryMsk;
+
     private double quantity;
 
     private double height;
@@ -70,6 +72,7 @@ public class Product implements Serializable {
         this.retailPrice = retailPrice;
         this.quantity = quantity;
         this.supplier = supplier;
+
         this.category = category;
     }
 
@@ -206,16 +209,23 @@ public class Product implements Serializable {
         this.unitsW = unitsW;
     }
 
-    public String get_weight () {
+    public double getDeliveryMsk() {
+        return deliveryMsk;
+    }
+
+    public void setDeliveryMsk(double deliveryMsk) {
+        this.deliveryMsk = deliveryMsk;
+    }
+
+    public String get_weight() {
         // weight in kg
         double multiplier = 1.0;
         switch (unitsW) {
-            case "":
-                break;
-            default:
+            case "hundredths-pounds": default:
+                multiplier = 0.01 * 0.453592;
                 break;
         }
-        String result = Integer.toString((int) (weight*multiplier));
+        String result = Double.toString(weight*multiplier);
         return result;
     }
 
@@ -223,10 +233,8 @@ public class Product implements Serializable {
         // dimensions "HxLxW" in cm
         double multiplier = 1.0;
         switch (unitsL) {
-            case "hundreds inches":
-                multiplier = 10.0;
-                break;
-            default:
+            case "hundredths-inches": default:
+                multiplier = 0.01 * 2.54;
                 break;
         }
         String result = Integer.toString((int) (height*multiplier)) +"x"+ Integer.toString((int) (length*multiplier)) +"x"+ Integer.toString((int) (width*multiplier));
@@ -260,6 +268,10 @@ public class Product implements Serializable {
         return null;
     }
 
+    public PickupRequest getPickupRequest(String pickup, String insurance) {
+        return new PickupRequest(get_weight(), get_dimensions(), pickup, insurance, Double.toString(getRetailPrice()));
+    }
+
     static class ProductSerializer implements JsonSerializer <Product> {
         @Override
         public JsonElement serialize(Product src, java.lang.reflect.Type typeOfSrc, JsonSerializationContext context) {
@@ -271,6 +283,7 @@ public class Product implements Serializable {
             if (src.getPhoto() != null) result.addProperty("photo", src.getPhoto());
             if (src.getPurchasePrice() != Double.NaN) result.addProperty("purchase_price", src.getPurchasePrice());
             if (src.getRetailPrice() != Double.NaN) result.addProperty("retail_price", src.getRetailPrice());
+            if (src.getDeliveryMsk() != Double.NaN) result.addProperty("delivery_msk", src.getDeliveryMsk());
             if (src.getQuantity() != Double.NaN) result.addProperty("quantity", src.getQuantity());
             if (src.getHeight() != Double.NaN) result.addProperty("height", src.getHeight());
             if (src.getLength() != Double.NaN) result.addProperty("length", src.getLength());
@@ -313,6 +326,7 @@ public class Product implements Serializable {
                 if (jsonObject.get("photo") != null) result.setPhoto(jsonObject.get("photo").getAsString());
                 if (jsonObject.get("purchase_price") != null) result.setPurchasePrice(jsonObject.get("purchase_price").getAsDouble());
                 if (jsonObject.get("retail_price") != null) result.setRetailPrice(jsonObject.get("retail_price").getAsDouble());
+                if (jsonObject.get("delivery_msk") != null) result.setDeliveryMsk(jsonObject.get("delivery_msk").getAsDouble());
                 if (jsonObject.get("quantity") != null) result.setQuantity(jsonObject.get("quantity").getAsDouble());
                 if (jsonObject.get("height") != null) result.setHeight(jsonObject.get("height").getAsDouble());
                 if (jsonObject.get("length") != null) result.setLength(jsonObject.get("length").getAsDouble());

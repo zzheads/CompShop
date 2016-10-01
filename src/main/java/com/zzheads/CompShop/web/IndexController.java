@@ -1,5 +1,6 @@
 package com.zzheads.CompShop.web;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.zzheads.CompShop.model.*;
 import com.zzheads.CompShop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +40,23 @@ public class IndexController {
     private AddressService addressService;
     @Autowired
     private AwsService awsService;
+    @Autowired
+    private CurrencyService currencyService;
 
     @ModelAttribute("total")
     public double evaluateTotal() {
         return shoppingCart.evaluateTotal();
+    }
+
+    @ModelAttribute("amazon_percent")
+    public double getAmazonPercent() {
+        return DollarRateServiceImpl.AMAZON_PERCENT;
+    }
+
+    @ModelAttribute("dollar_rate")
+    public double getRate() throws SAXException, UnirestException, ParserConfigurationException, IOException {
+        double rate = currencyService.getTodayDollarRate();
+        return rate;
     }
 
     @ModelAttribute("allCategories")

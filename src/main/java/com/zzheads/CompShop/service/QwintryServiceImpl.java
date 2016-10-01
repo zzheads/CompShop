@@ -3,11 +3,14 @@ package com.zzheads.CompShop.service;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.zzheads.CompShop.model.PickupRequest;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.zzheads.CompShop.model.PickupRequest.fromJson;
 
 @Service
 public class QwintryServiceImpl implements QwintryService {
@@ -107,5 +110,11 @@ public class QwintryServiceImpl implements QwintryService {
         String url = BASE_URL+"/api/balance";
         HttpResponse<JsonNode> jsonResponse = Unirest.get(url).asJson();
         return jsonResponse.getBody();
+    }
+
+    @Override
+    public String getCostPickup(String jsonPickupRequest) throws Exception {
+        PickupRequest pickupRequest = fromJson(jsonPickupRequest);
+        return Double.toString(getCostPickup(pickupRequest.getWeightInKg(), pickupRequest.getDimensionsInCm(), pickupRequest.getDelivery_pickup(), pickupRequest.getInsurance(), pickupRequest.getItems_value()));
     }
 }

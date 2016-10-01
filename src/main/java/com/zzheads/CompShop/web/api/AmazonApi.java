@@ -1,9 +1,6 @@
 package com.zzheads.CompShop.web.api;
 
-import com.zzheads.CompShop.model.Address;
-import com.zzheads.CompShop.model.Category;
 import com.zzheads.CompShop.model.Product;
-import com.zzheads.CompShop.model.Supplier;
 import com.zzheads.CompShop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Controller

@@ -155,7 +155,7 @@ public class AwsServiceImpl implements AwsService {
         return product;
     }
 
-    private Node findNode (NodeList nodeList, String nodeName) {
+    public static Node findNode (NodeList nodeList, String nodeName) {
         for (int i=0;i<nodeList.getLength();i++) {
             if (nodeList.item(i).getNodeName().equals(nodeName))
                 return nodeList.item(i);
@@ -163,7 +163,7 @@ public class AwsServiceImpl implements AwsService {
         return null;
     }
 
-    private Node findChild (Node node, String childNodeName) {
+    public static Node findChild (Node node, String childNodeName) {
         if (node == null) return null;
         NodeList nodeList = node.getChildNodes();
         return findNode(nodeList, childNodeName);

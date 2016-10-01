@@ -38,6 +38,9 @@ function printProduct (product) {
             +"<div class='grid-5'>"
                 +"<button id='"+product.id+"' class='mac' onclick='deleteProduct(this.id)'>[-]</button>"
             +"</div>"
+            +"<div class='grid-5'>"
+                +"<button id='"+product.id+"' class='mac' onclick='getCostDelivery(this.id)'>Delivery Cost</button>"
+            +"</div>"
         +"</div>";
     return htmlString;
 }
@@ -100,7 +103,6 @@ function getFromAmazon () {
             root.children().remove();
             if (productsFromAmazon!=null) {
                 for (var i = 0; i < productsFromAmazon.length; i++) {
-                    console.log(productsFromAmazon[i]);
                     root.append(printProductFromAmazon(productsFromAmazon[i], i));
                 }
             } else {
@@ -209,4 +211,42 @@ function deleteProduct (id) {
     } else {
         printFlashMessage("Данный продукт еще не сохранен в базе. Невозможно удалить.", "failure");
     }
+}
+
+function getCostDelivery(id) {
+    // var pickupRequest = {
+    //     weight: product.weight,
+    //     dimensions: product.height + "x" + product.length + "x" + product.width,
+    //     delivery_pickup: "msk_1",
+    //     insurance: "false",
+    //     items_value: product.retail_price,
+    //     units_length: product.units_l,
+    //     units_weight: product.units_w
+    // };
+
+    $.ajax({
+        url: "/costpickup/"+id,
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
+        success: function (cost) {
+            printFlashMessage("Стоимость доставки составит $" + cost, "info");
+        },
+        error: getErrorMsg
+    });
+}
+
+function calcDelivery () {
+    $.ajax({
+        url: "/costpickup",
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
+        success: function (count) {
+            printFlashMessage("Стоимость доставки до Москвы посчитана и установлена всем "+count+" продуктам в базе", "success");
+        },
+        error: getErrorMsg
+    });
 }

@@ -38,9 +38,15 @@ public class ProductApi {
     public @ResponseBody String save (@RequestBody String json) {
         Product product = Product.fromJson(json);
         Category category = categoryService.findByName(product.getCategory().getName());
-        if (category == null) category = new Category(product.getCategory().getName(),"", null);
+        if (category == null) {
+            category = new Category(product.getCategory().getName(),"", null);
+            categoryService.save(category);
+        }
         Supplier supplier = supplierService.findByName(product.getSupplier().getName());
-        if (supplier == null) supplier = new Supplier(product.getSupplier().getName(), null, null);
+        if (supplier == null) {
+            supplier = new Supplier(product.getSupplier().getName(), null, null);
+            supplierService.save(supplier);
+        }
         product.setCategory(category);
         product.setSupplier(supplier);
 

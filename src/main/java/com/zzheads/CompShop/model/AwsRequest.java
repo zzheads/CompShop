@@ -1,6 +1,5 @@
 package com.zzheads.CompShop.model;
 
-import com.zzheads.CompShop.Application;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -9,12 +8,6 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -38,7 +31,6 @@ public class AwsRequest {
 
     public AwsRequest() {
     }
-
 
     public Document getRequest (Map<String, String> params) throws IOException, NoSuchAlgorithmException, InvalidKeyException, ParserConfigurationException, SAXException {
         params.put("Service", "AWSECommerceService");

@@ -1,9 +1,7 @@
 package com.zzheads.CompShop.service;
 
 import com.mashape.unirest.http.JsonNode;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
+import com.zzheads.CompShop.model.PickupRequest;
 
 public interface QwintryService {
     double getCostPickup(String weight, String dimensions, String toPickup, String insurance, String value) throws Exception;
@@ -13,4 +11,5 @@ public interface QwintryService {
     JsonNode getHubs(String country) throws Exception;
     JsonNode getProfile() throws Exception;
     JsonNode getBalance() throws Exception;
+    String getCostPickup(String jsonPickupRequest) throws Exception;
 }

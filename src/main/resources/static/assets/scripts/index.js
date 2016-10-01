@@ -11,7 +11,7 @@ function getAllProducts() {
             if (allProducts!=null)
                 for (var i=0;i<allProducts.length;i++) {
                     root.append(getHtmlProduct(allProducts[i]));
-            }
+                }
         },
         error: getErrorMsg
     });
@@ -35,7 +35,7 @@ function addProductToCart (buttonId) {
         data: JSON.stringify(purchase, null, "\t"),
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (purchases) {
-            document.getElementById("shoppingCart").innerText = "$"+getTotal(purchases);
+            document.getElementById("shoppingCart").innerText = getTotal(purchases)*getAmazonPercent()*getDollarRate()+" RUB";
         },
         error: getErrorMsg
     });
@@ -73,18 +73,19 @@ function getIdFromElementId (elementId) {
 function getHtmlProduct (product) {
     var htmlString =
         "<div id='product#'"+product.id+" class='grid-100 lightgray-box'>"
-        +"<a id='ahref#"+product.id+"' href='#'  onclick='getProductDetails(this.id)'>"
-        +"<div class='grid-30'>"
-        +"<img src='"+product.photo+"' height='100px'/>"
-        +"</div>"
-        +"<div class='grid-60'>"
-        +"<h3>Name: "+product.name+"</h3>"
-        +"<p>Price: $"+product.retail_price+"</p>"
-        +"</div>"
-        +"</a>"
-        +"<div class='grid-10'>"
-        +"<button id='button#"+product.id+"' type='button' class='modern' onclick='addProductToCart(this.id)'>Купить</button>"
-        +"</div>"
+            +"<div class='grid-15'>"
+                +"<img src='"+product.photo+"' width='120px'/>"
+            +"</div>"
+            +"<a id='ahref#"+product.id+"' href='#'  onclick='getProductDetails(this.id)'>"
+                +"<div class='grid-75'>"
+                    +"<h3>Name: "+product.name+"</h3>"
+                    +"<p>Цена: "+product.retail_price*getAmazonPercent()*getDollarRate()+" RUB</p>"
+                    +"<p>Доставка: "+product.delivery_msk*getDollarRate()+" RUB</p>"
+                +"</div>"
+            +"</a>"
+            +"<div class='grid-10'>"
+                +"<button id='button#"+product.id+"' type='button' class='modern' onclick='addProductToCart(this.id)'>Купить</button>"
+            +"</div>"
         +"</div>";
 
     return htmlString;
@@ -96,14 +97,15 @@ function getHtmlDetailProduct(product) {
     var htmlString =
         "<div id='product#"+product.id+"' class='grid-100 lightgray-box'>"
             +"<div class='grid-30'>"
-                +"<img src='"+product.photo+"' height='100px'/>"
+                +"<img src='"+product.photo+"' width='120px' onclick='zoom(this.src)'/>"
             +"</div>"
             +"<div class='grid-60'>"
                 +"<p>("+category.name+"):</p>"
                 +"<h2>"+product.name+"</h2>"
                 +"<h4>"+product.description+"</h4>"
-                +"<p>Retail price: $"+product.retail_price+"</p>"
-                +"<p>Supplier: "+supplier.name+"</p>"
+                +"<p>Цена: "+product.retail_price*toRubles+" RUB</p>"
+                +"<p>Доставка (до Москвы): "+product.delivery_msk*getDollarRate()+" RUB</p>"
+                +"<p>Поставщик: "+supplier.name+"</p>"
             +"</div>"
             +"<div class='grid-10'>"
                 +"<button id='button#"+product.id+"' type='button' class='modern' onclick='addProductToCart(this.id)'>Купить</button>"
@@ -114,6 +116,7 @@ function getHtmlDetailProduct(product) {
 }
 
 function getHtmlShoppingCart(purchases) {
+    var toRubles = getDollarRate()*getAmazonPercent();
     var htmlString = "";
     if (purchases == null || purchases.length == 0) {
         printFlashMessage("Ваша корзина пуста.", "info");
@@ -127,7 +130,7 @@ function getHtmlShoppingCart(purchases) {
                 +getPurchaseString(purchases)
 
                 +"<div class='prefix-85 grid-15'>"
-                    +"<h2>Итого: $"+getTotal(purchases)+"</h2>"
+                    +"<h2>Итого: "+getTotal(purchases)*toRubles+"</h2>"
                 +"</div>"
                 +"<div class='prefix-85 grid-15'>"
                     +"<button class='modern' type='button' onclick='checkOut()'>Оплатить</button>"
@@ -138,6 +141,7 @@ function getHtmlShoppingCart(purchases) {
 }
 
 function getPurchaseString (purchases) {
+    var toRubles = getDollarRate()*getAmazonPercent();
     var string = "";
     for (var i=0;i<purchases.length;i++) {
         string +=
@@ -159,7 +163,7 @@ function getPurchaseString (purchases) {
                         +"</td>"
                         +"<td style='vertical-align: middle'>"
                             +"<div class='grid-10'>"
-                                +"<h4>$"+purchases[i].product.retail_price+"</h4>"
+                                +"<h4>"+purchases[i].product.retail_price*toRubles+" RUB</h4>"
                             +"</div>"
                         +"</td>"
                         +"<td style='vertical-align: middle'>"
@@ -174,7 +178,7 @@ function getPurchaseString (purchases) {
                         +"</td>"
                         +"<td style='vertical-align: middle'>"
                             +"<div class='grid-10'>"
-                                +"<h3>$"+(purchases[i].quantity*purchases[i].product.retail_price)+"</h3>"
+                                +"<h3>"+(purchases[i].quantity*purchases[i].product.retail_price*toRubles)+" RUB</h3>"
                             +"</div>"
                         +"</td>"
                     +"</tr>"
@@ -279,4 +283,14 @@ function searchProducts (pattern) {
         },
         error: getErrorMsg
     });
+}
+
+function getDollarRate() {
+    console.log($("meta[name='dollar_rate']").attr("content"));
+    return $("meta[name='dollar_rate']").attr("content");
+}
+
+function getAmazonPercent() {
+    console.log($("meta[name='amazon_percent']").attr("content"));
+    return $("meta[name='amazon_percent']").attr("content");
 }
