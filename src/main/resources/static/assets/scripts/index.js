@@ -79,8 +79,8 @@ function getHtmlProduct (product) {
             +"<a id='ahref#"+product.id+"' href='#'  onclick='getProductDetails(this.id)'>"
                 +"<div class='grid-75'>"
                     +"<h3>Name: "+product.name+"</h3>"
-                    +"<p>Цена: "+product.retail_price*getAmazonPercent()*getDollarRate()+" RUB</p>"
-                    +"<p>Доставка: "+product.delivery_msk*getDollarRate()+" RUB</p>"
+                    +"<p>Цена: "+(product.retail_price*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
+                    +"<p>с доставкой: "+(product.retail_price*getAmazonPercent()*getDollarRate()+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
                 +"</div>"
             +"</a>"
             +"<div class='grid-10'>"
@@ -94,6 +94,7 @@ function getHtmlProduct (product) {
 function getHtmlDetailProduct(product) {
     var category = JSON.parse(product.category);
     var supplier = JSON.parse(product.supplier);
+    var toRubles = getAmazonPercent()*getDollarRate();
     var htmlString =
         "<div id='product#"+product.id+"' class='grid-100 lightgray-box'>"
             +"<div class='grid-30'>"
@@ -103,8 +104,9 @@ function getHtmlDetailProduct(product) {
                 +"<p>("+category.name+"):</p>"
                 +"<h2>"+product.name+"</h2>"
                 +"<h4>"+product.description+"</h4>"
-                +"<p>Цена: "+product.retail_price*toRubles+" RUB</p>"
-                +"<p>Доставка (до Москвы): "+product.delivery_msk*getDollarRate()+" RUB</p>"
+                +"<p>Цена: "+(product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+" RUB</p>"
+                +"<p>Доставка (до Москвы): "+(product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
+                +"<p class='cost'>Цена с доставкой: "+(product.retail_price*toRubles+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
                 +"<p>Поставщик: "+supplier.name+"</p>"
             +"</div>"
             +"<div class='grid-10'>"
@@ -130,7 +132,7 @@ function getHtmlShoppingCart(purchases) {
                 +getPurchaseString(purchases)
 
                 +"<div class='prefix-85 grid-15'>"
-                    +"<h2>Итого: "+getTotal(purchases)*toRubles+"</h2>"
+                    +"<h2>Итого: "+(getTotal(purchases)*toRubles).toFixed(0).toLocaleUpperCase()+"</h2>"
                 +"</div>"
                 +"<div class='prefix-85 grid-15'>"
                     +"<button class='modern' type='button' onclick='checkOut()'>Оплатить</button>"
@@ -163,7 +165,7 @@ function getPurchaseString (purchases) {
                         +"</td>"
                         +"<td style='vertical-align: middle'>"
                             +"<div class='grid-10'>"
-                                +"<h4>"+purchases[i].product.retail_price*toRubles+" RUB</h4>"
+                                +"<h4>"+(purchases[i].product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+" RUB</h4>"
                             +"</div>"
                         +"</td>"
                         +"<td style='vertical-align: middle'>"
@@ -178,7 +180,7 @@ function getPurchaseString (purchases) {
                         +"</td>"
                         +"<td style='vertical-align: middle'>"
                             +"<div class='grid-10'>"
-                                +"<h3>"+(purchases[i].quantity*purchases[i].product.retail_price*toRubles)+" RUB</h3>"
+                                +"<h3>"+(purchases[i].quantity*purchases[i].product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+" RUB</h3>"
                             +"</div>"
                         +"</td>"
                     +"</tr>"
