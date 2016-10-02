@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> findBySearch(String pattern) {
         List<Product> result = new ArrayList<>();
         for (Product product : findAll()) {
-            if (product.getName().contains(pattern))
+            if (product.getName().toLowerCase().contains(pattern.toLowerCase()))
                 result.add(product);
         }
         return result;

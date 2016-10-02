@@ -102,7 +102,7 @@
         <div class="grid-100">
             <div class="prefix-75 grid-10 suffix-15">
                 <a href="#" onclick="checkShoppingCart()">
-                    <span th:inline="text" id="shoppingCart">[[@{'$'+${total}}]]</span>
+                    <span th:inline="text" id="shoppingCart">[[@{${total}+' RUB'}]]</span>
                     <img src="../assets/images/empty-cart-light.png" height="30px" align="middle"/>
                 </a>
             </div>

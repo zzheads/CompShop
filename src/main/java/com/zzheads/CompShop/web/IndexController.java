@@ -44,8 +44,8 @@ public class IndexController {
     private CurrencyService currencyService;
 
     @ModelAttribute("total")
-    public double evaluateTotal() {
-        return shoppingCart.evaluateTotal();
+    public long evaluateTotal() throws SAXException, UnirestException, ParserConfigurationException, IOException {
+        return (long) (shoppingCart.evaluateTotal()*getRate()*getAmazonPercent());
     }
 
     @ModelAttribute("amazon_percent")

@@ -35,7 +35,7 @@ function addProductToCart (buttonId) {
         data: JSON.stringify(purchase, null, "\t"),
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (purchases) {
-            document.getElementById("shoppingCart").innerText = getTotal(purchases)*getAmazonPercent()*getDollarRate()+" RUB";
+            document.getElementById("shoppingCart").innerText = (getTotal(purchases)*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB";
         },
         error: getErrorMsg
     });
@@ -238,6 +238,7 @@ function updateCart (inputId) {
         success: function (purchases) {
             root.children().remove();
             root.append(getHtmlShoppingCart(purchases));
+            document.getElementById("shoppingCart").innerText = (getTotal(purchases)*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB";
         },
         error: getErrorMsg
     });
