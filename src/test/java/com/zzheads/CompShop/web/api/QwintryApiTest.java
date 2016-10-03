@@ -2,6 +2,8 @@ package com.zzheads.CompShop.web.api;
 
 import com.zzheads.CompShop.Application;
 import com.zzheads.CompShop.model.PickupRequest;
+import com.zzheads.CompShop.model.Product;
+import com.zzheads.CompShop.service.ProductService;
 import com.zzheads.CompShop.service.QwintryService;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +28,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +40,8 @@ public class QwintryApiTest {
     @Mock
     private MockHttpSession session;
 
+    @Mock
+    private ProductService productService;
     @Mock
     private QwintryService qwintryService;
     @InjectMocks
@@ -53,15 +57,23 @@ public class QwintryApiTest {
 
     @Test
     public void costPickupTest() throws Exception {
-        final String ANSWER_COST = "Cost of delivery to pickup point";
-        PickupRequest pickupRequest = new PickupRequest("100", "100x100x100", "msk_1", "false", "649.56", "hundredths-inches", "hundredths-pounds");
-        when(qwintryService.getCostPickup(pickupRequest.toJson())).thenReturn(ANSWER_COST);
-        MvcResult result = mockMvc.perform(post("/costpickup").contentType(MediaType.APPLICATION_JSON).content(pickupRequest.toJson())).andDo(print())
+        Product product = new Product("Test product", "Test desc", "photo url", 495.67, 537.67, 0, null, null);
+        product.setWeight(100);
+        product.setHeight(100);
+        product.setLength(100);
+        product.setWidth(100);
+        product.setUnitsL("cm");
+        product.setUnitsW("kg");
+        final String CALCULATED_COST_OF_DELIVERY = "56.78";
+        when(productService.findById(1L)).thenReturn(product);
+        when(qwintryService.getCostPickup(product.getPickupRequest("msk_1", "false").toJson())).thenReturn(CALCULATED_COST_OF_DELIVERY);
+
+        MvcResult result = mockMvc.perform(get("/costpickup/1").contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andReturn();
 
-        assertEquals(ANSWER_COST, result.getResponse().getContentAsString());
+        assertEquals(CALCULATED_COST_OF_DELIVERY, result.getResponse().getContentAsString());
         verify(qwintryService).getCostPickup(any(String.class));
     }
 

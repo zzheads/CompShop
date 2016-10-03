@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -34,14 +35,12 @@ public class ProductServiceTest {
         supplierTest = new Supplier("Test supplier", null, null);
         productTest = new Product("Test product","", "", 10, 20, 5, supplierTest, categoryTest);
 
-        categoryService.save(categoryTest);
-        supplierService.save(supplierTest);
         productService.save(productTest);
     }
 
     @Test
     public void findAll() throws Exception {
-        assertEquals(1, productService.findAll().size());
+        assertTrue(productService.findAll().contains(productTest));
     }
 
     @Test
@@ -60,8 +59,9 @@ public class ProductServiceTest {
 
     @Test
     public void delete() throws Exception {
+        int before = productService.findAll().size();
         productService.delete(productTest);
-        assertEquals(0, productService.findAll().size());
+        assertEquals(before-1, productService.findAll().size());
     }
 
 }

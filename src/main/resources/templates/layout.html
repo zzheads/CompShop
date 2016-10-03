@@ -8,6 +8,7 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <meta name="_csrf_parameterName" th:content="${_csrf.parameterName}"/>
     <title>CompShop</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed|Ubuntu+Condensed" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="../assets/css/normalize.css" />
     <link rel="stylesheet" type="text/css" href="../assets/css/unsemantic-grid-responsive.css" />
     <link rel="stylesheet" type="text/css" href="../assets/css/styles.css" />
@@ -58,11 +59,13 @@
                             <a href="#" onclick="showAbout()"> О нас </a>
                         </td>
                         <td style="vertical-align:middle">
-                            <div class="grid-30">
-                                <select id="selectCategory" onchange="getSelectedCategory(this.value)">
-                                    <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}"></option>
-                                </select>
-                            </div>
+
+
+                                    <select id="selectCategory" onchange="getSelectedCategory(this.value)" class="select">
+                                        <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}" class="select"></option>
+                                    </select>
+
+
                         </td>
                         <td style="vertical-align:middle">
                             <div class="grid-30">
@@ -218,6 +221,22 @@
             </div>
         </div>
     </div>
+
+    <footer th:fragment="footer">
+        <div class="grid-100 bluegray-box">
+            <div class="prefix-20 grid-40">
+                <p>Информация, указанная на сайте, не является публичной офертой. Информация о товарах, их технических свойствах и характеристиках, ценах является предложением ClickLogistic делать оферты. Акцептом ClickLogistic полученной оферты является подтверждение заказа с указанием товара и его цены. Сообщение ClickLogistic о цене заказанного товара, отличающейся от указанной в оферте, является отказом ClickLogistic от акцепта и одновременно офертой со стороны ClickLogistic. Информация о технических характеристиках товаров, указанная на сайте, может быть изменена производителем в одностороннем порядке.Изображения товаров на фотографиях, представленных в каталоге на сайте, могут отличаться от оригиналов. Информация о цене товара, указанная в каталоге на сайте, может отличаться от фактической к моменту оформления заказа на соответствующий товар. Подтверждением цены заказанного товара является сообщение ClickLogistic о цене такого товара. Администрация Сайта не несет ответственности за содержание сообщений и других материалов на сайте, их возможное несоответствие действующему законодательству, за достоверность размещаемых Пользователями материалов, качество информации и изображений.</p>
+            </div>
+        </div>
+        <div class="grid-100 bluegray-box center">
+            <p>
+                &copy; Alexey Papin, 2016 -
+                <a href="mailto:zzheads@gmail.com?Subject=Recipe%20Site" target="_top"><img src="../assets/images/email.png" height="14px" style="opacity:0.5;filter:alpha(opacity=50);"/></a>
+                <a href="http://www.facebook.com/zzheads"><img src="../assets/images/facebook.png" height="14px" style="opacity:0.5;filter:alpha(opacity=50);"/></a>
+                <a href="https://github.com/zzheads"><img src="../assets/images/github.png" height="14px" style="opacity:0.5;filter:alpha(opacity=50);"/></a>
+            </p>
+        </div>
+    </footer>
 
 </div>
 <script src="../assets/scripts/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>

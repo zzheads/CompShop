@@ -128,7 +128,9 @@ public class AwsServiceImpl implements AwsService {
 
         switch (responseGroup) {
             case "Images":
-                product.setPhoto(doc.getElementsByTagName("LargeImage").item(0).getFirstChild().getTextContent());
+                product.setSmallImage(doc.getElementsByTagName("SmallImage").item(0).getFirstChild().getTextContent());
+                product.setMediumImage(doc.getElementsByTagName("MediumImage").item(0).getFirstChild().getTextContent());
+                product.setLargeImage(doc.getElementsByTagName("LargeImage").item(0).getFirstChild().getTextContent());
                 break;
 
             case "OfferSummary":

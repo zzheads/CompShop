@@ -37,7 +37,7 @@ public class QwintryApi {
         return Integer.toString(count);
     }
 
-    @RequestMapping(path = "/costpickup/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/costpickup/{id}", method = RequestMethod.GET, produces = {"application/json"})
     public @ResponseBody String costPickup (@PathVariable Long id) {
         Product product = productService.findById(id);
         PickupRequest pickupRequest = product.getPickupRequest("msk_1", "false");

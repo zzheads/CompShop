@@ -58,7 +58,9 @@ public class AmazonApi {
             product = new Product();
         }
         if (productImage != null) {
-            product.setPhoto(productImage.getPhoto());
+            product.setSmallImage(productImage.getSmallImage());
+            product.setMediumImage(productImage.getMediumImage());
+            product.setLargeImage(productImage.getLargeImage());
         }
         product.setAsin(asin);
         return product.toJson();

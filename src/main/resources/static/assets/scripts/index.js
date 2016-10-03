@@ -71,22 +71,29 @@ function getIdFromElementId (elementId) {
 }
 
 function getHtmlProduct (product) {
+    console.log("Im here");
     var htmlString =
         "<div id='product#'"+product.id+" class='grid-100 lightgray-box'>"
-            +"<div class='grid-15'>"
-                +"<img src='"+product.photo+"' width='120px'/>"
+            +"<div class='grid-20'>"
+                +getThumbnail(product.medium_image)
             +"</div>"
-            +"<a id='ahref#"+product.id+"' href='#'  onclick='getProductDetails(this.id)'>"
-                +"<div class='grid-75'>"
-                    +"<h3>Name: "+product.name+"</h3>"
-                    +"<p>Цена: "+(product.retail_price*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
-                    +"<p>с доставкой: "+(product.retail_price*getAmazonPercent()*getDollarRate()+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
-                +"</div>"
-            +"</a>"
-            +"<div class='grid-10'>"
-                +"<button id='button#"+product.id+"' type='button' class='modern' onclick='addProductToCart(this.id)'>Купить</button>"
+            +"<div id='ahref#"+product.id+"' onclick='getProductDetails(this.id)' class='grid-65'>"
+                +"<h3>"+product.name+"</h3>"
+                +"<p>Цена: "+(product.retail_price*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
+                +"<p><table><tr><td>с доставкой: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*getAmazonPercent()*getDollarRate()+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" </td> <td> RUB</td></tr></table></p>"
+            +"</div>"
+            +"<div class='grid-15'>"
+                +"<button id='button#"+product.id+"' type='button' class='primary' onclick='addProductToCart(this.id)'>Купить</button>"
             +"</div>"
         +"</div>";
+
+    return htmlString;
+}
+
+function getThumbnail (src) {
+    var htmlString =
+        "<div style='float: left; width: 120px; height: 120px; overflow: hidden; background: url(\""+src+"\") center center no-repeat; margin-right: 10px;'>";
+    htmlString+="</div>";
 
     return htmlString;
 }
@@ -98,7 +105,7 @@ function getHtmlDetailProduct(product) {
     var htmlString =
         "<div id='product#"+product.id+"' class='grid-100 lightgray-box'>"
             +"<div class='grid-30'>"
-                +"<img src='"+product.photo+"' width='120px' onclick='zoom(this.src)'/>"
+                +"<img src='"+product.medium_image+"' width='120px' onclick='zoom(\""+product.large_image+"\")'/>"
             +"</div>"
             +"<div class='grid-60'>"
                 +"<p>("+category.name+"):</p>"

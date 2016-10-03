@@ -23,7 +23,9 @@ public class Product implements Serializable {
     @Type(type = "org.hibernate.type.TextType")
     private String description;
 
-    private String photo;
+    private String smallImage;
+    private String mediumImage;
+    private String largeImage;
 
     private double purchasePrice;
 
@@ -51,10 +53,12 @@ public class Product implements Serializable {
     public Product() {
     }
 
-    public Product(String name, String description, String photo, double purchasePrice, double retailPrice, double quantity, Supplier supplier, Category category) {
+    public Product(String name, String description, String smallImage,String mediumImage, String largeImage, double purchasePrice, double retailPrice, double quantity, Supplier supplier, Category category) {
         this.name = name;
         this.description = description;
-        this.photo = photo;
+        this.smallImage = smallImage;
+        this.mediumImage = mediumImage;
+        this.largeImage = largeImage;
         this.purchasePrice = purchasePrice;
         this.retailPrice = retailPrice;
         this.quantity = quantity;
@@ -63,11 +67,13 @@ public class Product implements Serializable {
         this.asin = "";
     }
 
-    public Product(String name, String asin, String description, String photo, double purchasePrice, double retailPrice, double quantity, Supplier supplier, Category category) {
+    public Product(String name, String asin, String description, String smallImage, String mediumImage, String largeImage, double purchasePrice, double retailPrice, double quantity, Supplier supplier, Category category) {
         this.name = name;
         this.asin = asin;
         this.description = description;
-        this.photo = photo;
+        this.smallImage = smallImage;
+        this.mediumImage = mediumImage;
+        this.largeImage = largeImage;
         this.purchasePrice = purchasePrice;
         this.retailPrice = retailPrice;
         this.quantity = quantity;
@@ -81,12 +87,28 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public String getPhoto() {
-        return photo;
+    public String getSmallImage() {
+        return smallImage;
     }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
+    public void setSmallImage(String smallImage) {
+        this.smallImage = smallImage;
+    }
+
+    public String getMediumImage() {
+        return mediumImage;
+    }
+
+    public void setMediumImage(String mediumImage) {
+        this.mediumImage = mediumImage;
+    }
+
+    public String getLargeImage() {
+        return largeImage;
+    }
+
+    public void setLargeImage(String largeImage) {
+        this.largeImage = largeImage;
     }
 
     public Long getId() {
@@ -280,7 +302,9 @@ public class Product implements Serializable {
             if (src.getName() != null) result.addProperty("name", src.getName());
             if (src.getAsin() != null) result.addProperty("asin", src.getAsin());
             if (src.getDescription() != null) result.addProperty("description", src.getDescription());
-            if (src.getPhoto() != null) result.addProperty("photo", src.getPhoto());
+            if (src.getSmallImage() != null) result.addProperty("small_image", src.getSmallImage());
+            if (src.getMediumImage() != null) result.addProperty("medium_image", src.getMediumImage());
+            if (src.getLargeImage() != null) result.addProperty("large_image", src.getLargeImage());
             if (src.getPurchasePrice() != Double.NaN) result.addProperty("purchase_price", src.getPurchasePrice());
             if (src.getRetailPrice() != Double.NaN) result.addProperty("retail_price", src.getRetailPrice());
             if (src.getDeliveryMsk() != Double.NaN) result.addProperty("delivery_msk", src.getDeliveryMsk());
@@ -323,7 +347,9 @@ public class Product implements Serializable {
                 if (jsonObject.get("name") != null) result.setName(jsonObject.get("name").getAsString());
                 if (jsonObject.get("asin") != null) result.setAsin(jsonObject.get("asin").getAsString());
                 if (jsonObject.get("description") != null) result.setDescription(jsonObject.get("description").getAsString());
-                if (jsonObject.get("photo") != null) result.setPhoto(jsonObject.get("photo").getAsString());
+                if (jsonObject.get("small_image") != null) result.setSmallImage(jsonObject.get("small_image").getAsString());
+                if (jsonObject.get("medium_image") != null) result.setMediumImage(jsonObject.get("medium_image").getAsString());
+                if (jsonObject.get("large_image") != null) result.setLargeImage(jsonObject.get("large_image").getAsString());
                 if (jsonObject.get("purchase_price") != null) result.setPurchasePrice(jsonObject.get("purchase_price").getAsDouble());
                 if (jsonObject.get("retail_price") != null) result.setRetailPrice(jsonObject.get("retail_price").getAsDouble());
                 if (jsonObject.get("delivery_msk") != null) result.setDeliveryMsk(jsonObject.get("delivery_msk").getAsDouble());
@@ -371,12 +397,21 @@ public class Product implements Serializable {
 
         if (Double.compare(product.purchasePrice, purchasePrice) != 0) return false;
         if (Double.compare(product.retailPrice, retailPrice) != 0) return false;
+        if (Double.compare(product.deliveryMsk, deliveryMsk) != 0) return false;
         if (Double.compare(product.quantity, quantity) != 0) return false;
+        if (Double.compare(product.height, height) != 0) return false;
+        if (Double.compare(product.length, length) != 0) return false;
+        if (Double.compare(product.width, width) != 0) return false;
+        if (Double.compare(product.weight, weight) != 0) return false;
         if (id != null ? !id.equals(product.id) : product.id != null) return false;
         if (name != null ? !name.equals(product.name) : product.name != null) return false;
         if (asin != null ? !asin.equals(product.asin) : product.asin != null) return false;
         if (description != null ? !description.equals(product.description) : product.description != null) return false;
-        return photo != null ? photo.equals(product.photo) : product.photo == null;
+        if (smallImage != null ? !smallImage.equals(product.smallImage) : product.smallImage != null) return false;
+        if (mediumImage != null ? !mediumImage.equals(product.mediumImage) : product.mediumImage != null) return false;
+        if (largeImage != null ? !largeImage.equals(product.largeImage) : product.largeImage != null) return false;
+        if (unitsL != null ? !unitsL.equals(product.unitsL) : product.unitsL != null) return false;
+        return unitsW != null ? unitsW.equals(product.unitsW) : product.unitsW == null;
 
     }
 
@@ -388,13 +423,27 @@ public class Product implements Serializable {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (asin != null ? asin.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (photo != null ? photo.hashCode() : 0);
+        result = 31 * result + (smallImage != null ? smallImage.hashCode() : 0);
+        result = 31 * result + (mediumImage != null ? mediumImage.hashCode() : 0);
+        result = 31 * result + (largeImage != null ? largeImage.hashCode() : 0);
         temp = Double.doubleToLongBits(purchasePrice);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(retailPrice);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(deliveryMsk);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(quantity);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(height);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(length);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(width);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (unitsL != null ? unitsL.hashCode() : 0);
+        temp = Double.doubleToLongBits(weight);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (unitsW != null ? unitsW.hashCode() : 0);
         return result;
     }
 }

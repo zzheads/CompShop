@@ -3,7 +3,9 @@ package com.zzheads.CompShop.service;
 import com.zzheads.CompShop.dao.CategoryDao;
 import com.zzheads.CompShop.dao.ProductDao;
 import com.zzheads.CompShop.dao.SupplierDao;
+import com.zzheads.CompShop.model.Category;
 import com.zzheads.CompShop.model.Product;
+import com.zzheads.CompShop.model.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +39,41 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product save(Product product) {
-        return productDao.save(product);
+        if (product == null) return null;
+
+        Supplier supplier = product.getSupplier();
+        Category category = product.getCategory();
+        if (category!=null) categoryDao.save(category);
+        if (supplier!=null) supplierDao.save(supplier);
+        product.setCategory(category);
+        product.setSupplier(supplier);
+        productDao.save(product);
+        if (category!=null) {
+            category.addProduct(product);
+            categoryDao.save(category);
+        }
+        if (supplier!=null) {
+            supplier.addProduct(product);
+            supplierDao.save(supplier);
+        }
+        return product;
     }
 
     @Override
     public void delete(Product product) {
+        if (product == null) return;
+        if (product.getSupplier() != null) {
+            product.getSupplier().removeProduct(product);
+            supplierDao.save(product.getSupplier());
+            product.setSupplier(null);
+            productDao.save(product);
+        }
+        if (product.getCategory() != null) {
+            product.getCategory().removeProduct(product);
+            categoryDao.save(product.getCategory());
+            product.setCategory(null);
+            productDao.save(product);
+        }
         productDao.delete(product);
     }
 
