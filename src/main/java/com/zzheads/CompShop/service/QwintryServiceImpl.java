@@ -1,13 +1,18 @@
 package com.zzheads.CompShop.service;
 
+import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.sun.xml.internal.xsom.impl.scd.Iterators;
 import com.zzheads.CompShop.model.PickupRequest;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.zzheads.CompShop.model.PickupRequest.fromJson;
@@ -89,6 +94,21 @@ public class QwintryServiceImpl implements QwintryService {
         String url = BASE_URL+"/api/locations-list";
         HttpResponse<JsonNode> jsonResponse = Unirest.get(url).asJson();
         return jsonResponse.getBody();
+    }
+
+    @Override
+    public List<String> getLocationsByCity (String city) throws Exception {
+        List<String> result = new ArrayList<>();
+        JSONObject object = getLocations().getObject().getJSONObject("result");
+        if (object == null) return null;
+        JSONObject jsonCity = object.getJSONObject(city);
+        if (jsonCity == null) return null;
+        JSONObject pickupPoints = jsonCity.getJSONObject("pickup_points");
+        if (pickupPoints == null) return null;
+        Object[] names = pickupPoints.keySet().toArray();
+        for (Object o : names)
+            result.add(o.toString());
+        return result;
     }
 
     @Override

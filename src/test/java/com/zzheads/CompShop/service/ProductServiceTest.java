@@ -33,7 +33,7 @@ public class ProductServiceTest {
     public void setUp() throws Exception {
         categoryTest = new Category("Test category", "", null);
         supplierTest = new Supplier("Test supplier", null, null);
-        productTest = new Product("Test product","", "", 10, 20, 5, supplierTest, categoryTest);
+        productTest = new Product("Test product","", "", "", "", 10, 20, 5, supplierTest, categoryTest);
 
         productService.save(productTest);
     }
@@ -51,7 +51,7 @@ public class ProductServiceTest {
 
     @Test
     public void save() throws Exception {
-        Product product = new Product("Test product","", "", 10, 20, 5, supplierTest, categoryTest);
+        Product product = new Product("Test product","", "", "", "", 10, 20, 5, supplierTest, categoryTest);
         Long idBeforeSave = product.getId();
         productService.save(product);
         assertNotEquals(idBeforeSave, product.getId());

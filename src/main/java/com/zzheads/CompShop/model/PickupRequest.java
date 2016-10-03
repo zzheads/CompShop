@@ -106,6 +106,9 @@ public class PickupRequest {
             case "hundredths-pounds":
                 multiplier = 0.01 * 0.453592;
                 break;
+            case "pounds":
+                multiplier = 1.00 * 0.453592;
+                break;
             case "kilograms": default:
                 multiplier = 1.0;
                 break;
@@ -120,6 +123,9 @@ public class PickupRequest {
         switch (unitsL) {
             case "hundredths-inches":
                 multiplier = 0.01 * 2.54;
+                break;
+            case "inches":
+                multiplier = 1.00 * 2.54;
                 break;
             case "centimeters" : default:
                 multiplier = 1.0;

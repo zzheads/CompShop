@@ -57,7 +57,7 @@ public class QwintryApiTest {
 
     @Test
     public void costPickupTest() throws Exception {
-        Product product = new Product("Test product", "Test desc", "photo url", 495.67, 537.67, 0, null, null);
+        Product product = new Product("Test product", "Test desc", "small pic url", "medium pic url", "large pic url", 495.67, 537.67, 0, null, null);
         product.setWeight(100);
         product.setHeight(100);
         product.setLength(100);

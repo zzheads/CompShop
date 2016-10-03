@@ -8,10 +8,12 @@ function getAllProducts() {
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (allProducts) {
             root.children().remove();
+            root.append("<div class='grid-100 empty-box-20'>");
             if (allProducts!=null)
                 for (var i=0;i<allProducts.length;i++) {
                     root.append(getHtmlProduct(allProducts[i]));
                 }
+            root.append("</div>");
         },
         error: getErrorMsg
     });
@@ -52,7 +54,9 @@ function getProductDetails (buttonId) {
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (product) {
             root.children().remove();
+            root.append("<div class='grid-100 empty-box-20'>");
             root.append(getHtmlDetailProduct(product));
+            root.append("</div>");
         },
         error: getErrorMsg
     });
@@ -75,12 +79,12 @@ function getHtmlProduct (product) {
     var htmlString =
         "<div id='product#'"+product.id+" class='grid-100 lightgray-box'>"
             +"<div class='grid-20'>"
-                +getThumbnail(product.medium_image)
+                +getThumbnail(product)
             +"</div>"
-            +"<div id='ahref#"+product.id+"' onclick='getProductDetails(this.id)' class='grid-65'>"
-                +"<h3>"+product.name+"</h3>"
-                +"<p>Цена: "+(product.retail_price*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
-                +"<p><table><tr><td>с доставкой: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*getAmazonPercent()*getDollarRate()+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" </td> <td> RUB</td></tr></table></p>"
+            +"<div id='ahref#"+product.id+"' onclick='getProductDetails(this.id)' class='grid-65 product'>"
+                +"<h4 class='product-title'>"+product.name+"</h4>"
+                +"<h5>Цена: "+(product.retail_price*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</h5>"
+                +"<h5><table><tr><td>с доставкой: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*getAmazonPercent()*getDollarRate()+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" </td> <td> RUB</td></tr></table></p>"
             +"</div>"
             +"<div class='grid-15'>"
                 +"<button id='button#"+product.id+"' type='button' class='primary' onclick='addProductToCart(this.id)'>Купить</button>"
@@ -90,9 +94,10 @@ function getHtmlProduct (product) {
     return htmlString;
 }
 
-function getThumbnail (src) {
+function getThumbnail (product) {
+    var src = product.small_image;
     var htmlString =
-        "<div style='float: left; width: 120px; height: 120px; overflow: hidden; background: url(\""+src+"\") center center no-repeat; margin-right: 10px;'>";
+        "<div style='float: left; width: 80px; height: 80px; overflow: hidden; background: url(\""+src+"\") center center no-repeat; margin-right: 10px;'>";
     htmlString+="</div>";
 
     return htmlString;
