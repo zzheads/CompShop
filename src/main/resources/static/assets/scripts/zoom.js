@@ -1,6 +1,3 @@
-//Problem: User when clicking on image goes to a dead end
-//Solution: Create an overlay with the large image - Lightbox
-
 var $overlay = $('<div id="overlay"></div>');
 var $image = $("<img>");
 var $caption = $("<p></p>");
@@ -14,11 +11,11 @@ $overlay.append($caption);
 //Add overlay
 $("body").append($overlay);
 
-
 function zoom(imageLocation) {
     //event.preventDefault();
     //var imageLocation = $(this).attr("href");
     //Update overlay with the image linked in the link
+    console.log("Zoom is here");
     $image.attr("src", imageLocation);
 
     //Show the overlay.

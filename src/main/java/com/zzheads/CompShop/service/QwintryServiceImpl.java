@@ -1,12 +1,10 @@
 package com.zzheads.CompShop.service;
 
-import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-import com.sun.xml.internal.xsom.impl.scd.Iterators;
+import com.zzheads.CompShop.model.City;
 import com.zzheads.CompShop.model.PickupRequest;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -108,6 +106,24 @@ public class QwintryServiceImpl implements QwintryService {
         Object[] names = pickupPoints.keySet().toArray();
         for (Object o : names)
             result.add(o.toString());
+        return result;
+    }
+
+    @Override
+    public List<City> getCities() throws Exception {
+        List<City> result = new ArrayList<>();
+        JSONObject object = getLocations().getObject().getJSONObject("result");
+        Object[] namesOfCities = object.keySet().toArray();
+        for (Object o : namesOfCities) {
+            String cityName = (String) o;
+            JSONObject jsonCity = object.getJSONObject(cityName);
+            JSONObject pickupPoints = jsonCity.getJSONObject("pickup_points");
+            Object[] namesPP = pickupPoints.keySet().toArray();
+            List<String> namesOfPickupPoints = new ArrayList<>();
+            for (Object namePP : namesPP)
+                namesOfPickupPoints.add((String) namePP);
+            result.add(new City(null, cityName, namesOfPickupPoints));
+        }
         return result;
     }
 

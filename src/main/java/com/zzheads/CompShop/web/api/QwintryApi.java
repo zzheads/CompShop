@@ -49,4 +49,22 @@ public class QwintryApi {
         return null;
     }
 
+    @RequestMapping(path = "/costpickup/{city}", method = RequestMethod.GET, produces = {"application/json"})
+    public @ResponseBody String calculateDeliveryForCity (@PathVariable String city) {
+        int count = 0;
+        for (Product product : productService.findAll()) {
+            try {
+                String deliveryPoint = qwintryService.getLocationsByCity(city).get(0);
+                PickupRequest pickupRequest = product.getPickupRequest(deliveryPoint, "false");
+                String costDelivery = qwintryService.getCostPickup(pickupRequest.toJson());
+                product.setDeliveryMsk(Double.parseDouble(costDelivery));
+                productService.save(product);
+                count++;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ("-1");
+            }
+        }
+        return Integer.toString(count);
+    }
 }

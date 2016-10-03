@@ -79,11 +79,11 @@ function getHtmlProduct (product) {
     var htmlString =
         "<div id='product#'"+product.id+" class='grid-100 lightgray-box'>"
             +"<div class='grid-20'>"
-                +getThumbnail(product)
+                +getThumbnail(product, false)
             +"</div>"
             +"<div id='ahref#"+product.id+"' onclick='getProductDetails(this.id)' class='grid-65 product'>"
                 +"<h4 class='product-title'>"+product.name+"</h4>"
-                +"<h5>Цена: "+(product.retail_price*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</h5>"
+                +"<h5><table><tr><td>Цена: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+"</td> <td> RUB</td></tr></table></h5>"
                 +"<h5><table><tr><td>с доставкой: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*getAmazonPercent()*getDollarRate()+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" </td> <td> RUB</td></tr></table></p>"
             +"</div>"
             +"<div class='grid-15'>"
@@ -94,12 +94,18 @@ function getHtmlProduct (product) {
     return htmlString;
 }
 
-function getThumbnail (product) {
-    var src = product.small_image;
-    var htmlString =
-        "<div style='float: left; width: 80px; height: 80px; overflow: hidden; background: url(\""+src+"\") center center no-repeat; margin-right: 10px;'>";
-    htmlString+="</div>";
+function getThumbnail (product, detailed) {
+    var src_small = product.small_image, src_medium = product.medium_image, src_large = product.large_image;
+    var small_res = "width: 80px; height: 80px;", large_res = "width: 180px; height: 180px;";
+    var htmlString = "";
 
+    if (detailed) {
+        htmlString = "<div class='zoomable' style='float: left; "+large_res+" overflow: hidden; background: url(\""+src_medium+"\") center center no-repeat; margin-right: 10px;' onclick='zoom(\""+src_large+"\")'></div>";
+    } else {
+        htmlString = "<div style='float: left; "+small_res+" overflow: hidden; background: url(\""+src_small+"\") center center no-repeat; margin-right: 10px;'></div>";
+    }
+
+    console.log("Thumbnail is here");
     return htmlString;
 }
 
@@ -109,20 +115,20 @@ function getHtmlDetailProduct(product) {
     var toRubles = getAmazonPercent()*getDollarRate();
     var htmlString =
         "<div id='product#"+product.id+"' class='grid-100 lightgray-box'>"
-            +"<div class='grid-30'>"
-                +"<img src='"+product.medium_image+"' width='120px' onclick='zoom(\""+product.large_image+"\")'/>"
+            +"<div class='grid-20'>"
+                +getThumbnail(product, true)
             +"</div>"
             +"<div class='grid-60'>"
                 +"<p>("+category.name+"):</p>"
-                +"<h2>"+product.name+"</h2>"
+                +"<h2 class='product-title'>"+product.name+"</h2>"
                 +"<h4>"+product.description+"</h4>"
-                +"<p>Цена: "+(product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+" RUB</p>"
-                +"<p>Доставка (до Москвы): "+(product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
-                +"<p class='cost'>Цена с доставкой: "+(product.retail_price*toRubles+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB</p>"
+                +"<p><table><tr><td>Цена: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
+                +"<p><table><tr><td>Доставка (до Москвы): </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
+                +"<p><table><tr><td>Цена с доставкой: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*toRubles+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
                 +"<p>Поставщик: "+supplier.name+"</p>"
             +"</div>"
-            +"<div class='grid-10'>"
-                +"<button id='button#"+product.id+"' type='button' class='modern' onclick='addProductToCart(this.id)'>Купить</button>"
+            +"<div class='grid-20'>"
+                +"<button id='button#"+product.id+"' type='button' class='primary' onclick='addProductToCart(this.id)'>Купить</button>"
             +"</div>"
         +"</div>";
 
@@ -308,4 +314,19 @@ function getDollarRate() {
 function getAmazonPercent() {
     console.log($("meta[name='amazon_percent']").attr("content"));
     return $("meta[name='amazon_percent']").attr("content");
+}
+
+function getSelectedCity (city) {
+    console.log(city);
+    $.ajax({
+        url: "/costpickup/"+city,
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
+        success: function (count) {
+            printFlashMessage("Стоимость доставки пересчитана для всех "+count+"продуктов в базе.", "success");
+        },
+        error: getErrorMsg
+    });
 }

@@ -13,7 +13,6 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.xml.sax.SAXException;
@@ -23,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -42,6 +42,10 @@ public class IndexController {
     private AwsService awsService;
     @Autowired
     private CurrencyService currencyService;
+    @Autowired
+    private QwintryService qwintryService;
+    @Autowired
+    private CitiesService citiesService;
 
     @ModelAttribute("total")
     public long evaluateTotal() throws SAXException, UnirestException, ParserConfigurationException, IOException {
@@ -57,6 +61,16 @@ public class IndexController {
     public double getRate() throws SAXException, UnirestException, ParserConfigurationException, IOException {
         double rate = currencyService.getTodayDollarRate();
         return rate;
+    }
+
+    @ModelAttribute ("cities")
+    public List<String> getCititesForDelivery () throws Exception {
+        Date today = new Date();
+        if (citiesService.findAll() == null || citiesService.findAll().size() == 0 || !citiesService.findAll().get(0).getModified().equals(today)) {
+            for (City cities : qwintryService.getCities())
+                citiesService.save(cities);
+        }
+        return citiesService.findAllCities();
     }
 
     @ModelAttribute("allCategories")

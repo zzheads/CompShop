@@ -32,6 +32,10 @@ a {
     margin-right: 15px;
 }
 
+.zoomable:hover {
+    cursor: pointer;
+}
+
 td {
     padding: 0;
 }

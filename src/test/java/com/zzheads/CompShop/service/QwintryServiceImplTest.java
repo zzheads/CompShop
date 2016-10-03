@@ -68,4 +68,10 @@ public class QwintryServiceImplTest {
         List<String> result = qwintryService.getLocationsByCity("Волгоград");
         assertEquals(locationsVolgograd, result.toArray());
     }
+
+    @Test
+    public void getCitiesTest() throws Exception {
+        List<String> cities = qwintryService.getCities();
+        assertEquals("", cities.get(0));
+    }
 }
