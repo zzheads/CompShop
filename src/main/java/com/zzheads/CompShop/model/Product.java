@@ -31,7 +31,7 @@ public class Product implements Serializable {
 
     private double retailPrice;
 
-    private double deliveryMsk;
+    private double delivery;
 
     private double quantity;
 
@@ -231,12 +231,12 @@ public class Product implements Serializable {
         this.unitsW = unitsW;
     }
 
-    public double getDeliveryMsk() {
-        return deliveryMsk;
+    public double getDelivery() {
+        return delivery;
     }
 
-    public void setDeliveryMsk(double deliveryMsk) {
-        this.deliveryMsk = deliveryMsk;
+    public void setDelivery(double delivery) {
+        this.delivery = delivery;
     }
 
     public String get_weight() {
@@ -307,7 +307,7 @@ public class Product implements Serializable {
             if (src.getLargeImage() != null) result.addProperty("large_image", src.getLargeImage());
             if (src.getPurchasePrice() != Double.NaN) result.addProperty("purchase_price", src.getPurchasePrice());
             if (src.getRetailPrice() != Double.NaN) result.addProperty("retail_price", src.getRetailPrice());
-            if (src.getDeliveryMsk() != Double.NaN) result.addProperty("delivery_msk", src.getDeliveryMsk());
+            if (src.getDelivery() != Double.NaN) result.addProperty("delivery_msk", src.getDelivery());
             if (src.getQuantity() != Double.NaN) result.addProperty("quantity", src.getQuantity());
             if (src.getHeight() != Double.NaN) result.addProperty("height", src.getHeight());
             if (src.getLength() != Double.NaN) result.addProperty("length", src.getLength());
@@ -352,7 +352,7 @@ public class Product implements Serializable {
                 if (jsonObject.get("large_image") != null) result.setLargeImage(jsonObject.get("large_image").getAsString());
                 if (jsonObject.get("purchase_price") != null) result.setPurchasePrice(jsonObject.get("purchase_price").getAsDouble());
                 if (jsonObject.get("retail_price") != null) result.setRetailPrice(jsonObject.get("retail_price").getAsDouble());
-                if (jsonObject.get("delivery_msk") != null) result.setDeliveryMsk(jsonObject.get("delivery_msk").getAsDouble());
+                if (jsonObject.get("delivery_msk") != null) result.setDelivery(jsonObject.get("delivery_msk").getAsDouble());
                 if (jsonObject.get("quantity") != null) result.setQuantity(jsonObject.get("quantity").getAsDouble());
                 if (jsonObject.get("height") != null) result.setHeight(jsonObject.get("height").getAsDouble());
                 if (jsonObject.get("length") != null) result.setLength(jsonObject.get("length").getAsDouble());
@@ -397,7 +397,7 @@ public class Product implements Serializable {
 
         if (Double.compare(product.purchasePrice, purchasePrice) != 0) return false;
         if (Double.compare(product.retailPrice, retailPrice) != 0) return false;
-        if (Double.compare(product.deliveryMsk, deliveryMsk) != 0) return false;
+        if (Double.compare(product.delivery, delivery) != 0) return false;
         if (Double.compare(product.quantity, quantity) != 0) return false;
         if (Double.compare(product.height, height) != 0) return false;
         if (Double.compare(product.length, length) != 0) return false;
@@ -430,7 +430,7 @@ public class Product implements Serializable {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(retailPrice);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(deliveryMsk);
+        temp = Double.doubleToLongBits(delivery);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(quantity);
         result = 31 * result + (int) (temp ^ (temp >>> 32));

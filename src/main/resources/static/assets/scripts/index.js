@@ -113,6 +113,7 @@ function getHtmlDetailProduct(product) {
     var category = JSON.parse(product.category);
     var supplier = JSON.parse(product.supplier);
     var toRubles = getAmazonPercent()*getDollarRate();
+    var description = getDescription(product.description);
     var htmlString =
         "<div id='product#"+product.id+"' class='grid-100 lightgray-box'>"
             +"<div class='grid-20'>"
@@ -120,10 +121,18 @@ function getHtmlDetailProduct(product) {
             +"</div>"
             +"<div class='grid-60'>"
                 +"<p>("+category.name+"):</p>"
-                +"<h2 class='product-title'>"+product.name+"</h2>"
-                +"<h4>"+product.description+"</h4>"
-                +"<p><table><tr><td>Цена: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
-                +"<p><table><tr><td>Доставка (до Москвы): </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
+                +"<h2 class='product-title'>"+product.name+"</h2>";
+
+    htmlString = htmlString + "<h4><ul>"
+    for (var i=0;i<description.length;i++) {
+        htmlString = htmlString + "<li>" + description[i] + "</li>";
+    }
+    htmlString = htmlString + "</ul></h4>"
+
+    var city_delivery = document.getElementById("selectCity").value;
+
+    htmlString = htmlString + "<p><table><tr><td>Цена: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
+                +"<p><table><tr><td>Доставка (до "+city_delivery+"): </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
                 +"<p><table><tr><td>Цена с доставкой: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*toRubles+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
                 +"<p>Поставщик: "+supplier.name+"</p>"
             +"</div>"
@@ -170,15 +179,22 @@ function getPurchaseString (purchases) {
                     +"<tr>"
                         +"<td style='vertical-align: middle'>"
                             +"<div class='grid-100'>"
-                                +"<img src='"+purchases[i].product.photo+"' height='100px'>"
+                                +getThumbnail(purchases[i].product, false)
                             +"</div>"
                         +"</td>"
                         +"<td style='vertical-align: middle'>"
                             +"<div class='grid-100'>"
                                 +"<p>"
-                                    +"<h3>"+purchases[i].product.name+"</h3>"
-                                    +"<h5>"+purchases[i].product.description+"</h5>"
-                                +"</p>"
+                                    +"<h3>"+purchases[i].product.name+"</h3>";
+
+                                    var description = getDescription(purchases[i].product.description);
+                                    string = string + "<h5><ul>"
+                                    for (var j=0;j<description.length;j++) {
+                                        string = string + "<li>" + description[j] + "</li>";
+                                    }
+                                    string = string + "</ul></h5>";
+
+                                string = string + "</p>"
                             +"</div>"
                         +"</td>"
                         +"<td style='vertical-align: middle'>"
@@ -319,13 +335,37 @@ function getAmazonPercent() {
 function getSelectedCity (city) {
     console.log(city);
     $.ajax({
-        url: "/costpickup/"+city,
+        url: "/costpickup_bycityname/"+city,
         type: "GET",
         dataType: "json",
         contentType: "application/json",
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (count) {
             printFlashMessage("Стоимость доставки пересчитана для всех "+count+"продуктов в базе.", "success");
+            document.getElementById("deliveryCity").innerHTML=city;
+            getAllProducts();
+        },
+        error: getErrorMsg
+    });
+}
+
+function getDescription (stringDescription) {
+    var description = stringDescription.split('%n');
+    return description;
+}
+
+function changeSortingOrder (order) {
+    console.log(order);
+    $.ajax({
+        url: "/sorting",
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify(order),
+        contentType: "application/json",
+        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
+        success: function () {
+            printFlashMessage("Установлена сортировка "+order+".", "info");
+            getAllProducts();
         },
         error: getErrorMsg
     });

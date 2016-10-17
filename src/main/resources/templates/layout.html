@@ -65,14 +65,18 @@
                         </td>
                         <td style="vertical-align:middle">
                             <select id="selectCity" onchange="getSelectedCity(this.value)" class="select">
-                                <option th:each="city : ${cities}" th:value="${city}" th:text="${city}" class="select"></option>
+                                <option th:if="${city} != ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}" class="select"></option>
+                                <option th:if="${city} == ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}" class="select" selected="selected"></option>
                             </select>
                         </td>
                         <td style="vertical-align:middle">
                             <div class="grid-30">
-                                <a href="#" onclick="showAStore()">
-                                    aStore
-                                </a>
+                                <select id="selectSortingOrder" onchange="changeSortingOrder(this.value)" class="select">
+                                    <option th:if="${sorting_order} == 'по Имени'" selected="selected">по Имени</option>
+                                    <option th:if="${sorting_order} != 'по Имени'">по Имени</option>
+                                    <option th:if="${sorting_order} == 'по Цене'" selected="selected">по Цене</option>
+                                    <option th:if="${sorting_order} != 'по Цене'">по Цене</option>
+                                </select>
                             </div>
                         </td>
                         <td style="vertical-align:middle">
@@ -97,7 +101,12 @@
 
     <div th:fragment="header" class="orange-box">
         <div class="grid-100">
-            <div class="prefix-75 grid-10 suffix-15">
+            <div class="prefix-15 grid-10">
+                <a href="#">
+                    <span th:inline="text" id="deliveryCity">[[${city_delivery}]]</span>
+                </a>
+            </div>
+            <div class="prefix-50 grid-10 suffix-15">
                 <a href="#" onclick="checkShoppingCart()">
                     <span th:inline="text" id="shoppingCart">[[@{${total}+' RUB'}]]</span>
                     <img src="../assets/images/empty-cart-light.png" height="30px" align="middle"/>

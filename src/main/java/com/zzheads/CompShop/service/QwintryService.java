@@ -4,6 +4,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.zzheads.CompShop.model.City;
 import com.zzheads.CompShop.model.PickupRequest;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface QwintryService {
@@ -16,5 +17,6 @@ public interface QwintryService {
     JsonNode getBalance() throws Exception;
     String getCostPickup(String jsonPickupRequest) throws Exception;
     List<String> getLocationsByCity (String city) throws Exception;
-    List<City> getCities () throws Exception;
+    Collection<City> getCities () throws Exception;
+    City findCityByName(String cityName) throws Exception;
 }

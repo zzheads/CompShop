@@ -124,8 +124,11 @@ function applyToBase () {
             contentType: "application/json",
             headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
             success: function (product) {
-                if (product.purchase_price == null || product.photo == null) {
-                    printFlashMessage("Не удается получить информацию о продукте с ASIN="+product.asin, "failure");
+                if (product.purchase_price == null) {
+                    printFlashMessage("Не удается получить информацию о цене продукта с ASIN="+product.asin, "failure");
+                }
+                if (product.small_image == null && product.medium_image == null && product.large_image == null) {
+                    printFlashMessage("Не удается получить информацию о изображении продукта с ASIN="+product.asin, "failure");
                 }
                 product.name = getPropertyOfProduct("name", product.asin);
                 product.description = getPropertyOfProduct("description", product.asin);
@@ -139,7 +142,7 @@ function applyToBase () {
                     name: "amazon.com"
                 };
                 product.category = {
-                  name: "PCHardware"
+                  name: getSelectedIndex()
                 };
                 console.log(product);
                 $.ajax({
@@ -158,6 +161,13 @@ function applyToBase () {
             error: getErrorMsg
         });
     }
+}
+
+function getSelectedIndex () {
+    console.log("getSelectedIndex");
+    var id = "indexSearch";
+    var selectedIndex = document.getElementById(id).value;
+    return selectedIndex;
 }
 
 function getAsins () {
@@ -245,7 +255,7 @@ function calcDelivery () {
         contentType: "application/json",
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (count) {
-            printFlashMessage("Стоимость доставки до Москвы посчитана и установлена всем "+count+" продуктам в базе", "success");
+            printFlashMessage("Стоимость доставки посчитана и установлена "+count+" продуктам в базе", "success");
         },
         error: getErrorMsg
     });

@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,8 +34,8 @@ public class ProductServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        categoryTest = new Category("Test category", "", null);
-        supplierTest = new Supplier("Test supplier", null, null);
+        categoryTest = categoryService.findAll().get(0);
+        supplierTest = supplierService.findAll().get(0);
         productTest = new Product("Test product","", "", "", "", 10, 20, 5, supplierTest, categoryTest);
 
         productService.save(productTest);
@@ -62,6 +65,25 @@ public class ProductServiceTest {
         int before = productService.findAll().size();
         productService.delete(productTest);
         assertEquals(before-1, productService.findAll().size());
+    }
+
+    @Test
+    public void findAllSortedName() throws Exception {
+        productTest.setSupplier(null);
+        productTest.setCategory(null);
+        productService.save(productTest);
+        productService.delete(productTest);
+        List<Product> productList = new ArrayList<>();
+        for (int i=0;i<100;i++) {
+            String name = String.valueOf(i)+" product";
+            Double price = 10000.0/(i+1.0);
+            productList.add(new Product(name, "", "", "", "", price, price, 1, supplierTest, categoryTest));
+            productService.save(productList.get(i));
+        }
+
+        List<Product> sortedByName = productService.findAll("name");
+        List<Product> sortedByPrice = productService.findAll("price");
+        assertNotEquals(sortedByName, sortedByPrice);
     }
 
 }

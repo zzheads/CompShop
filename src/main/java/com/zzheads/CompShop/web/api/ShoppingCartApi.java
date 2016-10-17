@@ -17,10 +17,14 @@ import java.util.List;
 @Scope("request")
 @Controller
 public class ShoppingCartApi {
+    private final ProductService productService;
+    private final ShoppingCart shoppingCart;
+
     @Autowired
-    private ProductService productService;
-    @Autowired
-    private ShoppingCart shoppingCart;
+    public ShoppingCartApi(ProductService productService, ShoppingCart shoppingCart) {
+        this.productService = productService;
+        this.shoppingCart = shoppingCart;
+    }
 
     @RequestMapping(path = "/purchases", method = RequestMethod.GET, produces = {"application/json"}, consumes = {"application/json"})
     @ResponseStatus(HttpStatus.OK)

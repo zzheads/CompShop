@@ -2,34 +2,39 @@ package com.zzheads.CompShop.web.api;
 
 import com.zzheads.CompShop.model.Category;
 import com.zzheads.CompShop.model.Product;
+import com.zzheads.CompShop.model.SortingOrder;
 import com.zzheads.CompShop.model.Supplier;
 import com.zzheads.CompShop.service.CategoryService;
 import com.zzheads.CompShop.service.ProductService;
 import com.zzheads.CompShop.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Scope("request")
 @Controller
 public class ProductApi {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final SupplierService supplierService;
+    private final SortingOrder sortingOrder;
 
     @Autowired
-    public ProductApi(ProductService productService, CategoryService categoryService, SupplierService supplierService) {
+    public ProductApi(ProductService productService, CategoryService categoryService, SupplierService supplierService, SortingOrder sortingOrder) {
         this.productService = productService;
         this.categoryService = categoryService;
         this.supplierService = supplierService;
+        this.sortingOrder = sortingOrder;
     }
 
     @RequestMapping(path = "/product", method = RequestMethod.GET, produces = {"application/json"})
     @ResponseStatus (HttpStatus.OK)
     public @ResponseBody String findAll () {
-        List<Product> products = productService.findAll();
+        List<Product> products = productService.findAll(sortingOrder.getOrder());
         return Product.toJson(products);
     }
 

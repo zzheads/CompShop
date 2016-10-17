@@ -25,7 +25,7 @@ public class Supplier implements Serializable {
     private Address address;
 
     @OneToMany (cascade = CascadeType.ALL)
-    private List<Product> products = new ArrayList<>();
+    private List<Product> products;
 
     public Supplier() {
     }

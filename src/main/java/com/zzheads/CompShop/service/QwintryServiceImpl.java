@@ -8,10 +8,7 @@ import com.zzheads.CompShop.model.PickupRequest;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.zzheads.CompShop.model.PickupRequest.fromJson;
 
@@ -110,21 +107,33 @@ public class QwintryServiceImpl implements QwintryService {
     }
 
     @Override
-    public List<City> getCities() throws Exception {
-        List<City> result = new ArrayList<>();
+    public Collection<City> getCities() throws Exception {
+        Collection<City> result = new TreeSet<City>();
         JSONObject object = getLocations().getObject().getJSONObject("result");
+        if (object == null) return null;
         Object[] namesOfCities = object.keySet().toArray();
         for (Object o : namesOfCities) {
             String cityName = (String) o;
             JSONObject jsonCity = object.getJSONObject(cityName);
-            JSONObject pickupPoints = jsonCity.getJSONObject("pickup_points");
-            Object[] namesPP = pickupPoints.keySet().toArray();
-            List<String> namesOfPickupPoints = new ArrayList<>();
-            for (Object namePP : namesPP)
-                namesOfPickupPoints.add((String) namePP);
-            result.add(new City(null, cityName, namesOfPickupPoints));
+            if (jsonCity.has("pickup_points")) {
+                JSONObject pickupPoints = jsonCity.getJSONObject("pickup_points");
+                Object[] namesPP = pickupPoints.keySet().toArray();
+                List<String> namesOfPickupPoints = new ArrayList<>();
+                for (Object namePP : namesPP)
+                    namesOfPickupPoints.add((String) namePP);
+                result.add(new City(cityName, namesOfPickupPoints));
+            }
         }
         return result;
+    }
+
+    @Override
+    public City findCityByName(String cityName) throws Exception {
+        for (City city : getCities()) {
+            if (city.getName().equals(cityName))
+                return city;
+        }
+        return null;
     }
 
     @Override

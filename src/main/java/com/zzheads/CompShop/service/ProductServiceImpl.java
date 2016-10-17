@@ -9,9 +9,9 @@ import com.zzheads.CompShop.model.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,47 +33,65 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> findAll(String sortMethod) {
+        switch (sortMethod) {
+            case "по Имени": default:
+                return findAll().stream().sorted((p1, p2) -> {return p1.getName().compareTo(p2.getName());}).collect(Collectors.toList());
+            case "по Цене":
+                return findAll().stream().sorted((p1, p2) -> {
+                    if (p1.getRetailPrice() == p2.getRetailPrice())
+                        return 0;
+                    if (p1.getRetailPrice() > p2.getRetailPrice())
+                        return 1;
+                    return -1;
+                }).collect(Collectors.toList());
+        }
+    }
+
+    @Override
     public Product findById(Long id) {
         return productDao.findOne(id);
     }
 
     @Override
     public Product save(Product product) {
-        if (product == null) return null;
-
-        Supplier supplier = product.getSupplier();
-        Category category = product.getCategory();
-        if (category!=null) categoryDao.save(category);
-        if (supplier!=null) supplierDao.save(supplier);
-        product.setCategory(category);
-        product.setSupplier(supplier);
-        productDao.save(product);
-        if (category!=null) {
-            category.addProduct(product);
-            categoryDao.save(category);
-        }
-        if (supplier!=null) {
-            supplier.addProduct(product);
-            supplierDao.save(supplier);
-        }
-        return product;
+//        if (product == null) return null;
+//
+//        Supplier supplier = product.getSupplier();
+//        Category category = product.getCategory();
+//        if (category!=null) categoryDao.save(category);
+//        if (supplier!=null) supplierDao.save(supplier);
+//        product.setCategory(category);
+//        product.setSupplier(supplier);
+//        productDao.save(product);
+//        if (category!=null) {
+//            category.addProduct(product);
+//            categoryDao.save(category);
+//        }
+//        if (supplier!=null) {
+//            supplier.addProduct(product);
+//            supplierDao.save(supplier);
+//        }
+        return productDao.save(product);
     }
 
     @Override
     public void delete(Product product) {
-        if (product == null) return;
-        if (product.getSupplier() != null) {
-            product.getSupplier().removeProduct(product);
-            supplierDao.save(product.getSupplier());
-            product.setSupplier(null);
-            productDao.save(product);
-        }
-        if (product.getCategory() != null) {
-            product.getCategory().removeProduct(product);
-            categoryDao.save(product.getCategory());
-            product.setCategory(null);
-            productDao.save(product);
-        }
+//        if (product == null) return;
+//        Supplier supplier = product.getSupplier();
+//        Category category = product.getCategory();
+//        if (supplier != null) {
+//            supplier.removeProduct(product);
+//            product.setSupplier(null);
+//            productDao.save(product);
+//            supplierDao.save(supplier);
+//        }
+//        if (category != null) {
+//            category.removeProduct(product);
+//            product.setCategory(null);
+//            productDao.save(product);
+//            categoryDao.save(category);
+//        }
         productDao.delete(product);
     }
 

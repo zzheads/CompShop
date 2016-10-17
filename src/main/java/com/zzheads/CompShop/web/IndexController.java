@@ -22,34 +22,57 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 @Controller
 @Scope ("request")
 public class IndexController {
+    private final SupplierService supplierService;
+    private final ShoppingCart shoppingCart;
+    private final CategoryService categoryService;
+    private final ProductService productService;
+    private final AddressService addressService;
+    private final AwsService awsService;
+    private final CurrencyService currencyService;
+    private final QwintryService qwintryService;
+    private final CityService cityService;
+    private final SortingOrder sortingOrder;
+
     @Autowired
-    private SupplierService supplierService;
-    @Autowired
-    private ShoppingCart shoppingCart;
-    @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private AddressService addressService;
-    @Autowired
-    private AwsService awsService;
-    @Autowired
-    private CurrencyService currencyService;
-    @Autowired
-    private QwintryService qwintryService;
-    @Autowired
-    private CitiesService citiesService;
+    public IndexController(CurrencyService currencyService, AddressService addressService, ShoppingCart shoppingCart, AwsService awsService, QwintryService qwintryService, CategoryService categoryService, SupplierService supplierService, CityService cityService, ProductService productService, SortingOrder sortingOrder) {
+        this.currencyService = currencyService;
+        this.addressService = addressService;
+        this.shoppingCart = shoppingCart;
+        this.awsService = awsService;
+        this.qwintryService = qwintryService;
+        this.categoryService = categoryService;
+        this.supplierService = supplierService;
+        this.cityService = cityService;
+        this.productService = productService;
+        this.sortingOrder = sortingOrder;
+    }
 
     @ModelAttribute("total")
     public long evaluateTotal() throws SAXException, UnirestException, ParserConfigurationException, IOException {
         return (long) (shoppingCart.evaluateTotal()*getRate()*getAmazonPercent());
+    }
+
+    @ModelAttribute("city_delivery")
+    public String getCityDelivery() throws Exception {
+        if (shoppingCart.getCity() == null) {
+            shoppingCart.setCity(qwintryService.findCityByName("Волгоград"));
+        }
+        return shoppingCart.getCity().getName();
+    }
+
+    @ModelAttribute("sorting_order")
+    public String getSortingOrder() {
+        if (sortingOrder.getOrder() == null) {
+            sortingOrder.setOrder("по Имени");
+        }
+        return sortingOrder.getOrder();
     }
 
     @ModelAttribute("amazon_percent")
@@ -64,13 +87,14 @@ public class IndexController {
     }
 
     @ModelAttribute ("cities")
-    public List<String> getCititesForDelivery () throws Exception {
-        Date today = new Date();
-        if (citiesService.findAll() == null || citiesService.findAll().size() == 0 || !citiesService.findAll().get(0).getModified().equals(today)) {
-            for (City cities : qwintryService.getCities())
-                citiesService.save(cities);
+    public Collection<String> getCititesForDelivery () throws Exception {
+        Collection<City> allCities = cityService.findAll();
+        if (allCities == null || allCities.size()==0) {
+            allCities = qwintryService.getCities();
+            for (City city : allCities)
+                cityService.save(city);
         }
-        return citiesService.findAllCities();
+        return cityService.findAllCitiesNames();
     }
 
     @ModelAttribute("allCategories")

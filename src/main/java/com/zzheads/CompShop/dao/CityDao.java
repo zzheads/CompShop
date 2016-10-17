@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CitiesDao extends CrudRepository<City, Long> {
+public interface CityDao extends CrudRepository<City, Long> {
 }

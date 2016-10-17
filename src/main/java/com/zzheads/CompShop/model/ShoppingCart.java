@@ -1,12 +1,8 @@
 package com.zzheads.CompShop.model;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,13 +10,32 @@ import java.util.List;
 @Scope("session")
 public class ShoppingCart {
 
+    private City city;
+
     private List<Purchase> purchases;
 
     public ShoppingCart() {
     }
 
+    public ShoppingCart(City city) {
+        this.city = city;
+    }
+
     public ShoppingCart(List<Purchase> purchases) {
         this.purchases = purchases;
+    }
+
+    public ShoppingCart(City city, List<Purchase> purchases) {
+        this.city = city;
+        this.purchases = purchases;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 
     public List<Purchase> getPurchases() {

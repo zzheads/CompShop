@@ -1,59 +1,65 @@
 package com.zzheads.CompShop.model;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
-public class City {
+public class City implements Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @Temporal(value = TemporalType.DATE)
-    @DateTimeFormat (pattern = "dd/MM/yyyy")
-    private final Date modified;
-
-    private final String name;
+    private String name;
 
     @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private final List<String> pickup_points;
+    private List<String> pickupPoints;
 
     public City() {
-        this.modified = new Date();
         this.name = "";
-        this.pickup_points = null;
+        this.pickupPoints = new ArrayList<>();
     }
 
-    public City(Long id, String name, List<String> pickup_points) {
-        this.id = id;
-        this.modified = new Date();
+    public City(String name) {
         this.name = name;
-        this.pickup_points = pickup_points;
+        this.pickupPoints = new ArrayList<>();
     }
 
-    public Long getId() {
+    public City(String name, List<String> pickupPoints) {
+        this.name = name;
+        this.pickupPoints = pickupPoints;
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
-    }
-
-    public Date getModified() {
-        return modified;
     }
 
     public String getName() {
         return name;
     }
 
-    public List<String> getPickup_points() {
-        return pickup_points;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<String> getPickupPoints() {
+        return pickupPoints;
+    }
+
+    public void setPickupPoints(List<String> pickupPoints) {
+        this.pickupPoints = pickupPoints;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return toString().compareTo(o.toString());
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
