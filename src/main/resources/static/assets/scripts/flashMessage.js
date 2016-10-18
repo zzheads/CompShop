@@ -18,6 +18,7 @@ function clearFlash() {
 }
 
 function getErrorMsg (jqXHR, textStatus, errorThrown) {
+    console.log("getErrorMsg");
     clearFlash();
     printFlashMessage(jqXHR.responseText, "failure");
 }

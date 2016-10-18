@@ -70,14 +70,12 @@
                             </select>
                         </td>
                         <td style="vertical-align:middle">
-                            <div class="grid-30">
-                                <select id="selectSortingOrder" onchange="changeSortingOrder(this.value)" class="select">
-                                    <option th:if="${sorting_order} == 'по Имени'" selected="selected">по Имени</option>
-                                    <option th:if="${sorting_order} != 'по Имени'">по Имени</option>
-                                    <option th:if="${sorting_order} == 'по Цене'" selected="selected">по Цене</option>
-                                    <option th:if="${sorting_order} != 'по Цене'">по Цене</option>
-                                </select>
-                            </div>
+                            <select id="selectSortingOrder" onchange="changeSortingOrder(this.value)" class="select">
+                                <option th:if="${sorting_order} == 'по Имени'" value="по Имени" text="по Имени" selected="selected">по Имени</option>
+                                <option th:if="${sorting_order} != 'по Имени'" value="по Имени" text="по Имени">по Имени</option>
+                                <option th:if="${sorting_order} == 'по Цене'" value="по Цене" text="по Цене" selected="selected">по Цене</option>
+                                <option th:if="${sorting_order} != 'по Цене'" value="по Цене" text="по Цене">по Цене</option>
+                            </select>
                         </td>
                         <td style="vertical-align:middle">
                             <div class="grid-30">

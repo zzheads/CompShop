@@ -357,14 +357,12 @@ function getDescription (stringDescription) {
 function changeSortingOrder (order) {
     console.log(order);
     $.ajax({
-        url: "/sorting",
-        type: "POST",
+        url: "/sorting/"+order,
+        type: "GET",
         dataType: "json",
-        data: JSON.stringify(order),
         contentType: "application/json",
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
-        success: function () {
-            printFlashMessage("Установлена сортировка "+order+".", "info");
+        success: function (newOrder) {
             getAllProducts();
         },
         error: getErrorMsg
