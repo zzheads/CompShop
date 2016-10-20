@@ -37,7 +37,17 @@ function addProductToCart (buttonId) {
         data: JSON.stringify(purchase, null, "\t"),
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (purchases) {
-            document.getElementById("shoppingCart").innerText = (getTotal(purchases)*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB";
+            $.ajax({
+                url: "/delivery_cost",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json",
+                success: function (delivery_cost) {
+                    console.log("Check here");
+                    document.getElementById("shoppingCart").innerText = (getTotal(purchases) * getAmazonPercent() * getDollarRate() + delivery_cost * getDollarRate()).toFixed(0).toLocaleUpperCase() + " RUB";
+                },
+                error: getErrorMsg
+            });
         },
         error: getErrorMsg
     });
@@ -367,4 +377,8 @@ function changeSortingOrder (order) {
         },
         error: getErrorMsg
     });
+}
+
+function checkOut() {
+
 }

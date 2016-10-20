@@ -23,8 +23,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
+
+import static jdk.nashorn.internal.objects.Global.NaN;
 
 @Controller
 @Scope ("request")
@@ -39,9 +40,22 @@ public class IndexController {
     private final QwintryService qwintryService;
     private final CityService cityService;
     private final SortingOrder sortingOrder;
+    private final ShoppingCartService shoppingCartService;
 
     @Autowired
-    public IndexController(CurrencyService currencyService, AddressService addressService, ShoppingCart shoppingCart, AwsService awsService, QwintryService qwintryService, CategoryService categoryService, SupplierService supplierService, CityService cityService, ProductService productService, SortingOrder sortingOrder) {
+    public IndexController(
+            CurrencyService currencyService,
+            AddressService addressService,
+            ShoppingCart shoppingCart,
+            AwsService awsService,
+            QwintryService qwintryService,
+            CategoryService categoryService,
+            SupplierService supplierService,
+            CityService cityService,
+            ProductService productService,
+            SortingOrder sortingOrder,
+            ShoppingCartService shoppingCartService)
+    {
         this.currencyService = currencyService;
         this.addressService = addressService;
         this.shoppingCart = shoppingCart;
@@ -52,19 +66,34 @@ public class IndexController {
         this.cityService = cityService;
         this.productService = productService;
         this.sortingOrder = sortingOrder;
+        this.shoppingCartService = shoppingCartService;
     }
 
-    @ModelAttribute("total")
-    public long evaluateTotal() throws SAXException, UnirestException, ParserConfigurationException, IOException {
-        return (long) (shoppingCart.evaluateTotal()*getRate()*getAmazonPercent());
+    void initShoppingCart() throws Exception {
+        if (shoppingCart.getCity() == null) {
+            shoppingCart.setCity(qwintryService.findCityByName("Волгоград"));
+        }
+        if (shoppingCart.getDeliveryCostPerKg() == 0.0) {
+            shoppingCart.setDeliveryCostPerKg(shoppingCartService.getDeliveryCost());
+        }
     }
 
     @ModelAttribute("city_delivery")
     public String getCityDelivery() throws Exception {
-        if (shoppingCart.getCity() == null) {
-            shoppingCart.setCity(qwintryService.findCityByName("Волгоград"));
-        }
+        initShoppingCart();
         return shoppingCart.getCity().getName();
+    }
+
+    @ModelAttribute("total")
+    public long evaluateTotal() throws Exception {
+        initShoppingCart();
+        return (long) (shoppingCart.evaluateTotal()*getRate()*getAmazonPercent()+evaluateDeliveryCost());
+    }
+
+    @ModelAttribute("delivery_cost")
+    public double evaluateDeliveryCost() throws Exception {
+        initShoppingCart();
+        return shoppingCart.deliveryCost();
     }
 
     @ModelAttribute("sorting_order")

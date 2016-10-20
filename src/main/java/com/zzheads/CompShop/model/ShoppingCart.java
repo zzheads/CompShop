@@ -10,10 +10,10 @@ import java.util.List;
 @Component
 @Scope("session")
 public class ShoppingCart {
-
+    public final static double DELIVERY_COST_PER_KILOGRAMM = 26.1;
     private City city;
-
     private List<Purchase> purchases;
+    private double deliveryCostPerKg = DELIVERY_COST_PER_KILOGRAMM;
 
     public ShoppingCart() {
     }
@@ -45,6 +45,14 @@ public class ShoppingCart {
 
     public void setPurchases(List<Purchase> purchases) {
         this.purchases = purchases;
+    }
+
+    public double getDeliveryCostPerKg() {
+        return deliveryCostPerKg;
+    }
+
+    public void setDeliveryCostPerKg(double deliveryCostPerKg) {
+        this.deliveryCostPerKg = deliveryCostPerKg;
     }
 
     private void addPurchase(Product product, int quantity) {
@@ -121,5 +129,9 @@ public class ShoppingCart {
             volume += purchase.getProduct().getVolume() * purchase.getQuantity(); // in cm^2
         }
         return volume;
+    }
+
+    public double deliveryCost() {
+        return totalWeight()*deliveryCostPerKg;
     }
 }

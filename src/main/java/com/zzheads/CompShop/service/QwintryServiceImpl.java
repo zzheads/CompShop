@@ -5,6 +5,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.zzheads.CompShop.model.City;
 import com.zzheads.CompShop.model.PickupRequest;
+import com.zzheads.CompShop.model.ShoppingCart;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,10 @@ public class QwintryServiceImpl implements QwintryService {
 
     @Override
     public double getCostPickup(String weight, String dimensions, String toPickup, String insurance, String value) throws Exception {
+        return (Double.parseDouble(weight)* ShoppingCart.DELIVERY_COST_PER_KILOGRAMM);
+    }
+
+    public double _getCostPickup(String weight, String dimensions, String toPickup, String insurance, String value) throws Exception {
 
         Map<String, Object> params = new HashMap<>();
         params.put("params[weight_kg]", weight);

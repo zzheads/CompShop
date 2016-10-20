@@ -1,7 +1,6 @@
 package com.zzheads.CompShop.web.api;
 
 import com.google.gson.Gson;
-import com.zzheads.CompShop.model.Product;
 import com.zzheads.CompShop.model.Purchase;
 import com.zzheads.CompShop.model.ShoppingCart;
 import com.zzheads.CompShop.service.ProductService;
@@ -9,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Scope("request")
 @Controller
@@ -53,6 +49,12 @@ public class ShoppingCartApi {
         return Purchase.toJson(shoppingCart.getPurchases());
     }
 
+    @RequestMapping(path = "/delivery_cost", method = RequestMethod.GET, produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody String getDeliveryCost() {
+        Gson gson = new Gson();
+        return gson.toJson(shoppingCart.deliveryCost(), double.class);
+    }
 
     private class UpdateCart {
         private int index;

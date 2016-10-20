@@ -49,7 +49,6 @@ public class Purchase {
             return new double[] {product.getHeightInCm(), product.getLengthInCm(), product.getWidthInCm()};
         }
 
-
         return null;
     }
 

@@ -26,25 +26,18 @@ public class ShoppingCartServiceTest {
 
     @Test
     public void deliveryPrice() throws Exception {
-        List<Product> products = new ArrayList<>();
-        int NUM = 10;
-        for (int i=0;i<NUM;i++) {
-            int price = i*2+5;
-            double weight = Math.random()*150;
-            int length = (int) (Math.random()*10+1);
-            int height = (int) (Math.random()*10+1);
-            int width = (int) (Math.random()*10+1);
-            products.add(new Product("Test product #"+i, weight, length, height, width, price, "cm", "kg"));
-        }
+        Product product1 = new Product("Test product #1", 0.5, 100, 50, 50, 100, "cm", "kg");
+        Product product2 = new Product("Test product #2", 0.5, 100, 50, 50, 50, "cm", "kg");
 
         List<String> pickupPoints = new ArrayList<>();
         pickupPoints.add("vlg_1");
         shoppingCart.setCity(new City("Волгоград", pickupPoints));
-        List<Purchase> purchases = new ArrayList<>();
-        for (int i=0;i<NUM;i++) {
-            purchases.add(new Purchase(products.get(i), (int) (Math.random()*9+1)));
-            shoppingCart.addPurchase(purchases.get(i));
-        }
+
+        Purchase purchase1 = new Purchase(product1, 2);
+        Purchase purchase2 = new Purchase(product2, 4);
+
+        shoppingCart.addPurchase(purchase1);
+        shoppingCart.addPurchase(purchase2);
 
         double price = shoppingCartService.deliveryPrice(shoppingCart);
         assertEquals(100, price, 1);

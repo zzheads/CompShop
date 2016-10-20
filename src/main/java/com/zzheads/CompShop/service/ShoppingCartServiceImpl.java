@@ -14,6 +14,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public double deliveryPrice(ShoppingCart shoppingCart) throws UnirestException {
+        if (shoppingCart.getPurchases() == null) return 0;
+        if (shoppingCart.getPurchases().size() == 0) return 0;
+
         String weight = String.valueOf(shoppingCart.totalWeight());
         String weight_type = "kg";
         String country = "RU";
@@ -22,16 +25,22 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         String declarationTotal = String.valueOf(shoppingCart.evaluateTotal());
 
         JSONObject calc = logisticService.calculate(weight, weight_type, country, city, insurance, declarationTotal, "0", "0");
-        double priceByWeight = getTotal(calc);
+        double price = getTotal(calc);
+        return price;
+    }
 
-        weight = String.valueOf(shoppingCart.totalVolumeWeight());
-        calc = logisticService.calculate(weight, weight_type, country, city, insurance, declarationTotal, "0", "0");
-        double priceByVolume = getTotal(calc);
+    @Override
+    public double getDeliveryCost() throws UnirestException {
+        String weight = "1.0";
+        String weight_type = "kg";
+        String country = "RU";
+        String city = "Волгоград";
+        String insurance = "0";
+        String declarationTotal = "0";
 
-        if (priceByVolume>priceByWeight)
-            return priceByVolume;
-        else
-            return priceByWeight;
+        JSONObject calc = logisticService.calculate(weight, weight_type, country, city, insurance, declarationTotal, "0", "0");
+        double price = getTotal(calc);
+        return price;
     }
 
     private static double getTotal(JSONObject calc) {
