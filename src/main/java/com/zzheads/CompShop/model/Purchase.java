@@ -37,6 +37,22 @@ public class Purchase {
         this.quantity = quantity;
     }
 
+    public double[] getDimensions() {
+        // Height, Length, Width в сантиметрах
+        // Максимальное значение - длина
+        // Минимальное - высота
+        // Среднее - ширина
+        double[] result;
+        Product product = getProduct();
+        int quantity = getQuantity();
+        if (quantity == 1) {
+            return new double[] {product.getHeightInCm(), product.getLengthInCm(), product.getWidthInCm()};
+        }
+
+
+        return null;
+    }
+
     private static class PurchaseSerializer implements JsonSerializer<Purchase> {
         @Override
         public JsonElement serialize(Purchase src, Type typeOfSrc, JsonSerializationContext context) {

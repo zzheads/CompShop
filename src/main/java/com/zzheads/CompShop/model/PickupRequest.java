@@ -2,6 +2,8 @@ package com.zzheads.CompShop.model;
 
 import com.google.gson.Gson;
 
+import static com.zzheads.CompShop.model.Product.getMultiplierInCm;
+
 public class PickupRequest {
     private final String weight;
     private final String dimensions;
@@ -119,18 +121,7 @@ public class PickupRequest {
 
     public static String toCm(String height, String length, String width, String unitsL) {
         // dimensions "HxLxW" in cm
-        double multiplier = 1.0;
-        switch (unitsL) {
-            case "hundredths-inches":
-                multiplier = 0.01 * 2.54;
-                break;
-            case "inches":
-                multiplier = 1.00 * 2.54;
-                break;
-            case "centimeters" : default:
-                multiplier = 1.0;
-                break;
-        }
+        double multiplier = getMultiplierInCm(unitsL);
         String result = Integer.toString((int) (Double.parseDouble(height)*multiplier)) +"x"+ Integer.toString((int) (Double.parseDouble(length)*multiplier)) +"x"+ Integer.toString((int) (Double.parseDouble(width)*multiplier));
         return result;
     }

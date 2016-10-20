@@ -1,5 +1,6 @@
 package com.zzheads.CompShop.model;
 
+import com.zzheads.CompShop.utils.Maths;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -86,5 +87,39 @@ public class ShoppingCart {
             total += purchase.getProduct().getRetailPrice() * purchase.getQuantity();
         }
         return total;
+    }
+
+    public double totalWeight () {
+        if (purchases == null) return 0;
+        double weight = 0.0;
+        for (Purchase purchase : purchases) {
+            weight += Double.parseDouble(purchase.getProduct().get_weight()) * purchase.getQuantity(); // in kg
+        }
+        return weight;
+    }
+
+    public List<Product> getAllProducts () {
+        if (purchases == null) return null;
+        List<Product> result = new ArrayList<>();
+        for (Purchase purchase : purchases) {
+            for (int i=0;i<purchase.getQuantity();i++)
+                result.add(purchase.getProduct());
+        }
+        return result;
+    }
+
+    public double totalVolumeWeight() {
+        if (purchases == null) return 0;
+        double weight = Maths.volumePack(getAllProducts())/5000;
+        return weight;
+    }
+
+    public double totalVolume() {
+        if (purchases == null) return 0;
+        double volume = 0.0;
+        for (Purchase purchase : purchases) {
+            volume += purchase.getProduct().getVolume() * purchase.getQuantity(); // in cm^2
+        }
+        return volume;
     }
 }

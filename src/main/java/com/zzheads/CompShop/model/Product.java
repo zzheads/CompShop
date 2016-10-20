@@ -53,7 +53,18 @@ public class Product implements Serializable {
     public Product() {
     }
 
-    public Product(String name, String description, String smallImage,String mediumImage, String largeImage, double purchasePrice, double retailPrice, double quantity, Supplier supplier, Category category) {
+    public Product(String name, double weight, int length, int height, int width, double retailPrice, String unitsL, String unitsW) {
+        this.name = name;
+        this.weight = weight;
+        this.length = length;
+        this.height = height;
+        this.width = width;
+        this.retailPrice = retailPrice;
+        this.unitsL = unitsL;
+        this.unitsW = unitsW;
+    }
+
+    public Product(String name, String description, String smallImage, String mediumImage, String largeImage, double purchasePrice, double retailPrice, double quantity, Supplier supplier, Category category) {
         this.name = name;
         this.description = description;
         this.smallImage = smallImage;
@@ -78,7 +89,6 @@ public class Product implements Serializable {
         this.retailPrice = retailPrice;
         this.quantity = quantity;
         this.supplier = supplier;
-
         this.category = category;
     }
 
@@ -249,6 +259,42 @@ public class Product implements Serializable {
         }
         String result = Double.toString(weight*multiplier);
         return result;
+    }
+
+    public double getVolume() {
+        // in cm^2
+        double multiplier = getMultiplierInCm(unitsL);
+        double volume = (height*multiplier)*(length*multiplier)*(width*multiplier);
+        return volume;
+    }
+
+    public static double getMultiplierInCm(String units) {
+        // convert in cm
+        double multiplier = 1.0;
+        switch (units) {
+            case "hundredths-inches":
+                multiplier = 0.01 * 2.54;
+                break;
+            case "inches":
+                multiplier = 1.00 * 2.54;
+                break;
+            case "centimeters" : default:
+                multiplier = 1.0;
+                break;
+        }
+        return multiplier;
+    }
+
+    public double getHeightInCm() {
+        return height*getMultiplierInCm(unitsL);
+    }
+
+    public double getLengthInCm() {
+        return length*getMultiplierInCm(unitsL);
+    }
+
+    public double getWidthInCm() {
+        return width*getMultiplierInCm(unitsL);
     }
 
     public String get_dimensions() {
