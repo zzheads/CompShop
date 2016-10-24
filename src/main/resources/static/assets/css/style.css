@@ -22,6 +22,7 @@
     font-weight: bold;
 }
 .little {
+    font-size: small;
     height: 90%;
     margin: 5px;
     margin-left: 0;

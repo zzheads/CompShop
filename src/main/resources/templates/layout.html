@@ -53,21 +53,21 @@
 <div th:fragment="header-row" class="row orange darken-2">
     <div class="col s2 offset-s2">
         <select id="selectCity" onchange="getSelectedCity(this.value)" class="input-field browser-default little orange darken-1 white-text">
-            <option th:if="${city} != ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}" class="select"></option>
-            <option th:if="${city} == ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}" class="select" selected="selected"></option>
+            <option th:if="${city} != ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}"></option>
+            <option th:if="${city} == ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}" selected="selected"></option>
         </select>
     </div>
     <div class="col s2">
         <select id="selectSortingOrder" onchange="changeSortingOrder(this.value)" class="input-field browser-default little orange darken-1 white-text">
-            <option th:if="${sorting_order} == 'по Имени'" value="по Имени" text="по Имени" selected="selected">по Имени</option>
-            <option th:if="${sorting_order} != 'по Имени'" value="по Имени" text="по Имени">по Имени</option>
-            <option th:if="${sorting_order} == 'по Цене'" value="по Цене" text="по Цене" selected="selected">по Цене</option>
-            <option th:if="${sorting_order} != 'по Цене'" value="по Цене" text="по Цене">по Цене</option>
+            <option th:if="${sorting_order} == 'по Имени'" value="по Имени" selected="selected">по Имени</option>
+            <option th:if="${sorting_order} != 'по Имени'" value="по Имени">по Имени</option>
+            <option th:if="${sorting_order} == 'по Цене'" value="по Цене" selected="selected">по Цене</option>
+            <option th:if="${sorting_order} != 'по Цене'" value="по Цене">по Цене</option>
         </select>
     </div>
     <div class="col s2">
         <select id="selectCategory" class="input-field browser-default little orange darken-1 white-text" onchange="getSelectedCategory(this.value)">
-            <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}" class="select"></option>
+            <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}"></option>
         </select>
     </div>
     <div class="col s2 offset-s1">
@@ -134,6 +134,11 @@
     <script src="../assets/scripts/jquery-1.12.4.min.js"></script>
     <script src="../assets/scripts/materialize.js"></script>
     <script src="../assets/scripts/init.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('select').material_select();
+        });
+    </script>
 </div>
 
 </body>
