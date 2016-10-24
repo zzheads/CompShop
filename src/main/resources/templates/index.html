@@ -1,39 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <meta name="_csrf_parameterName" th:content="${_csrf.parameterName}"/>
-    <meta name="dollar_rate" th:content="${dollar_rate}"/>
-    <meta name="amazon_percent" th:content="${amazon_percent}"/>
-    <meta name="delivery_cost" th:content="${delivery_cost}"/>
-    <meta name="city_delivery" th:content="${city_delivery}"/>
-    <title>CompShop</title>
-    <link href="../assets/fonts/InconsolataCyr.ttf" rel="stylesheet"/>
-    <link rel="stylesheet" type="text/css" href="../assets/css/normalize.css" />
-    <link rel="stylesheet" type="text/css" href="../assets/css/unsemantic-grid-responsive.css" />
-    <link rel="stylesheet" type="text/css" href="../assets/css/styles.css" />
-</head>
-<body>
-<script src="../assets/scripts/flashMessage.js" type="text/javascript" charset="utf-8"></script>
-<script src="../assets/scripts/index.js" type="text/javascript" charset="utf-8"></script>
-<script src="../assets/scripts/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../assets/scripts/zoom.js" type="text/javascript" charset="utf-8"></script>
+<head th:replace="layout :: head-row"></head>
+<body class="blue-grey lighten-5">
 
-    <div th:replace="layout::nav"></div>
-    <div th:replace="layout::menu"></div>
-    <div th:replace="layout::header"></div>
-    <div th:replace="layout::flash"></div>
+<div th:replace="layout :: user-row"></div>
+<nav th:replace="layout :: nav-row"></nav>
+<div th:replace="layout :: header-row"></div>
 
-    <div class="container">
-        <div id="root" class="prefix-20 grid-60 suffix-20">
-            <script>$.ready(getAllProducts());</script>
+<div class="container">
+    <br/>
+    <div id="productsList" class="row col row s12">
+        <div th:each="product : ${products}" class="col s6 no-margin">
+            <div th:replace="layout :: product-row"></div>
         </div>
     </div>
+</div>
 
+<footer th:replace="layout :: footer-row"></footer>
+
+<div th:replace="layout :: scripts"></div>
+<script src="../assets/scripts/formatDecimal.js"></script>
+<script src="../assets/scripts/flashMessage.js"></script>
+<script src="../assets/scripts/index.js"></script>
 </body>
-<div th:replace="layout :: footer"></div>
 </html>

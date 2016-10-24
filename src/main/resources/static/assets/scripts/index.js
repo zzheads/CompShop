@@ -1,5 +1,5 @@
 function getAllProducts() {
-    var root = $("#root");
+    var productList = $("#productsList");
     $.ajax({
         url: "/product",
         type: "GET",
@@ -7,13 +7,13 @@ function getAllProducts() {
         contentType: "application/json",
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (allProducts) {
-            root.children().remove();
-            root.append("<div class='grid-100 empty-box-20'>");
-            if (allProducts!=null)
-                for (var i=0;i<allProducts.length;i++) {
-                    root.append(getHtmlProduct(allProducts[i]));
+            productList.children().remove();
+            if (allProducts!=null) {
+                for (var i = 0; i < allProducts.length; i++) {
+                    var product = $("<div class='col s6 no-margin'></div>").append(getHtmlProduct(allProducts[i]));
+                    productList.append(product);
                 }
-            root.append("</div>");
+            }
         },
         error: getErrorMsg
     });
@@ -85,23 +85,19 @@ function getIdFromElementId (elementId) {
 }
 
 function getHtmlProduct (product) {
-    console.log("Im here");
-    var htmlString =
-        "<div id='product#'"+product.id+" class='grid-100 lightgray-box'>"
-            +"<div class='grid-20'>"
-                +getThumbnail(product, false)
-            +"</div>"
-            +"<div id='ahref#"+product.id+"' onclick='getProductDetails(this.id)' class='grid-65 product'>"
-                +"<h4 class='product-title'>"+product.name+"</h4>"
-                +"<h5><table><tr><td>Цена: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+"</td> <td> RUB</td></tr></table></h5>"
-                +"<h5><table><tr><td>с доставкой: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*getAmazonPercent()*getDollarRate()+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+" </td> <td> RUB</td></tr></table></p>"
-            +"</div>"
-            +"<div class='grid-15'>"
-                +"<button id='button#"+product.id+"' type='button' class='primary' onclick='addProductToCart(this.id)'>Купить</button>"
-            +"</div>"
-        +"</div>";
-
-    return htmlString;
+    var productCard = $("<div id='productCard #" + product.id + "' class='card horizontal'></div>");
+    var cardImage = $("<div class='card-image'>");
+    cardImage.append("<div style='float: left; width: 150px; height: 150px; overflow: hidden; background: url(\"" + product.medium_image + "\") center center no-repeat; margin: 20px;'></div>");
+    var cardStacked = $("<div class='card-stacked'></div>");
+    cardStacked.append("<div class='card-content'><h6>" + product.name + "</h6></div>");
+    var cardAction = $("<div class='card-action'></div>");
+    cardAction.append("<span class='red-text text-accent-4 left'>" + formatDecimal(product.retail_price * getDollarRate() * getAmazonPercent(),',','.') + "</span>");
+    cardAction.append("<span class='left'>. руб</span>");
+    cardAction.append("<a href='#' class='btn-flat orange darken-3 white-text right'>Купить</a>");
+    cardStacked.append(cardAction);
+    productCard.append(cardImage);
+    productCard.append(cardStacked);
+    return productCard;
 }
 
 function getThumbnail (product, detailed) {
@@ -333,12 +329,12 @@ function searchProducts (pattern) {
 }
 
 function getDollarRate() {
-    console.log($("meta[name='dollar_rate']").attr("content"));
+    console.log("DollarRate = "+$("meta[name='dollar_rate']").attr("content"));
     return $("meta[name='dollar_rate']").attr("content");
 }
 
 function getAmazonPercent() {
-    console.log($("meta[name='amazon_percent']").attr("content"));
+    console.log("AmazonPercent = "+$("meta[name='amazon_percent']").attr("content"));
     return $("meta[name='amazon_percent']").attr("content");
 }
 

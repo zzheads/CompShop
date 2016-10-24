@@ -69,13 +69,18 @@ public class IndexController {
         this.shoppingCartService = shoppingCartService;
     }
 
-    void initShoppingCart() throws Exception {
+    private void initShoppingCart() throws Exception {
         if (shoppingCart.getCity() == null) {
             shoppingCart.setCity(qwintryService.findCityByName("Волгоград"));
         }
         if (shoppingCart.getDeliveryCostPerKg() == 0.0) {
             shoppingCart.setDeliveryCostPerKg(shoppingCartService.getDeliveryCost());
         }
+    }
+
+    @ModelAttribute("products")
+    public List<Product> getAllProducts() {
+        return productService.findAll();
     }
 
     @ModelAttribute("city_delivery")
