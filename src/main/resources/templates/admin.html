@@ -1,34 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <meta name="_csrf_parameterName" th:content="${_csrf.parameterName}"/>
-    <title>CompShop</title>
-    <link rel="stylesheet" type="text/css" href="../assets/css/normalize.css" />
-    <link rel="stylesheet" type="text/css" href="../assets/css/unsemantic-grid-responsive.css" />
-    <link rel="stylesheet" type="text/css" href="../assets/css/styles.css" />
-</head>
+<head th:replace="layout::head-row"></head>
 <body>
 <sec:authorize access="hasAnyRole('ADMIN', 'DEVELOPER')">
-<script src="../assets/scripts/flashMessage.js" type="text/javascript" charset="utf-8"></script>
-<script src="../assets/scripts/admin.js" type="text/javascript" charset="utf-8"></script>
-<script src="../assets/scripts/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
 
-    <div th:replace="layout::nav"></div>
-    <div th:replace="layout::menu_admin"></div>
-    <div th:replace="layout::header_admin"></div>
+    <div th:replace="layout::user-row"></div>
+    <nav th:replace="layout::nav-admin-row"></nav>
+    <div th:replace="layout::header-admin-row"></div>
     <div th:replace="layout::flash"></div>
 
     <div class="container">
-        <div id="root" class="prefix-20 grid-60 suffix-20">
-            <applet id="app" archive="CompShop.jar" code="AmazonApi"/>
-            <script>$.ready(startAdmin());</script>
+        <br/>
+        <div id="productsList" class="row col row s12">
+            <div th:each="product : ${products}" th:id="@{'productCard #'+${product.id}}" class="col s6 no-margin">
+                <div th:replace="layout :: product-row-admin"></div>
+            </div>
         </div>
     </div>
+
+    <div th:replace="layout::scripts"></div>
+    <script src="../assets/scripts/formatDecimal.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../assets/scripts/flashMessage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../assets/scripts/admin.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../assets/scripts/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+
 </sec:authorize>
 </body>
 </html>

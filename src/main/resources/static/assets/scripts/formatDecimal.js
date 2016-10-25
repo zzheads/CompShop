@@ -8,6 +8,8 @@
  */
 function formatDecimal(val, thSep, dcSep) {
 
+    if (typeof val == 'undefined')
+        return val;
     val = val.toFixed(0);
     // Проверка указания разделителя разрядов
     if (!thSep) thSep = ' ';

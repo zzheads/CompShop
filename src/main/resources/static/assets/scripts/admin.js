@@ -1,51 +1,7 @@
-function startAdmin(){
-    var root = $("#root");
-    $.ajax({
-        url: "/product",
-        type: "GET",
-        dataType: "json",
-        contentType: "application/json",
-        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
-        success: function (allProducts) {
-            root.children().remove();
-            if (allProducts!=null)
-                for (var i=0;i<allProducts.length;i++) {
-                    root.append(printProduct(allProducts[i]));
-                }
-        },
-        error: getErrorMsg
-    });
-}
+var productsFromAmazon = [];
+console.log("admin.js");
 
-function printProduct (product) {
-    var htmlString =
-        "<div id='product#"+product.id+"' class='grid-100'>"
-            +"<div class='grid-5'>"
-                +"<p>"+product.asin+"</p>"
-            +"</div>"
-            +"<div class='grid-10'>"
-                +"<img src='"+product.photo+"' height='30px'/>"
-            +"</div>"
-            +"<div class='grid-30'>"
-                +"<p>"+product.name+"</p>"
-            +"</div>"
-            +"<div class='grid-30'>"
-                +"<p>"+product.description+"</p>"
-            +"</div>"
-            +"<div class='grid-5'>"
-                +"<p>$"+product.purchase_price+"</p>"
-            +"</div>"
-            +"<div class='grid-5'>"
-                +"<button id='"+product.id+"' class='mac' onclick='deleteProduct(this.id)'>[-]</button>"
-            +"</div>"
-            +"<div class='grid-5'>"
-                +"<button id='"+product.id+"' class='mac' onclick='getCostDelivery(this.id)'>Delivery Cost</button>"
-            +"</div>"
-        +"</div>";
-    return htmlString;
-}
-
-function printProductFromAmazon (product, count) {
+function cartProductFromAmazon (product, count) {
     if (product.description==null) product.description="n/a";
     if (product.height==null) product.height="-";
     if (product.length==null) product.length="-";
@@ -54,43 +10,56 @@ function printProductFromAmazon (product, count) {
     if (product.units_l==null) product.units_l="n/a";
     if (product.units_w==null) product.units_w="n/a";
     if (product.purchase_price==null) product.purchase_price="-";
-    var htmlString =
-        "<div class='grid-100'>"
-        +"<div class='grid-10'>"
-            +"<p id='asin#"+count+"'>"+product.asin+"</p>"
-            +"<meta name='name#"+product.asin+"' content='"+product.name+"'/>"
-            +"<meta name='description#"+product.asin+"' content='"+product.description+"'/>"
-            +"<meta name='height#"+product.asin+"' content='"+product.height+"'/>"
-            +"<meta name='length#"+product.asin+"' content='"+product.length+"'/>"
-            +"<meta name='width#"+product.asin+"' content='"+product.width+"'/>"
-            +"<meta name='weight#"+product.asin+"' content='"+product.weight+"'/>"
-            +"<meta name='units_l#"+product.asin+"' content='"+product.units_l+"'/>"
-            +"<meta name='units_w#"+product.asin+"' content='"+product.units_w+"'/>"
-        +"</div>"
-        +"<div class='grid-10'>"
-            +"<img src='"+product.photo+"' height='30px'/>"
-        +"</div>"
-        +"<div class='grid-20'>"
-            +"<p>"+product.name+"</p>"
-        +"</div>"
-        +"<div class='grid-30'>"
-            +"<p>"+product.description+"</p>"
-        +"</div>"
-        +"<div class='grid-10'>"
-            +"<p>"+product.height+"*"+product.length+"*"+product.width+" "+product.units_l+"</p>"
-        +"</div>"
-        +"<div class='grid-10'>"
-            +"<p>"+product.weight+" "+product.units_w+"</p>"
-        +"</div>"
-        +"<div class='grid-10'>"
-            +"<p>$"+product.purchase_price+"</p>"
-        +"</div>"
-        +"</div>";
-    return htmlString;
+    if (product.small_image==null) product.small_image="n/a";
+    if (product.medium_image==null) product.medium_image="n/a";
+    if (product.large_image==null) product.large_image="n/a";
+
+    var productCard = $("<div id='productCard #" + product.id + "' class='card horizontal'></div>");
+    var cardImage = $("<div class='card-image'></div>");
+    cardImage.append("<div style='float: left; width: 150px; height: 150px; overflow: hidden; background: url(\"" + product.medium_image + "\") center center no-repeat; margin: 20px;'></div>");
+    var cardStacked = $("<div class='card-stacked'></div>");
+    var cardContent = $("<div class='card-content'></div>");
+    cardContent.append("<h6 id='asin#"+count+"'>"+product.asin+"</h6>");
+    cardContent.append("<h6>"+product.name+"</h6>");
+    cardContent.append(getDescriptionAsList(product.description));
+    cardContent.append("<h6>"+product.height+"x"+product.length+"x"+product.width+" "+product.units_l+"</h6>");
+    cardContent.append("<h6>"+product.weight+" "+product.units_w+"</h6>");
+    cardStacked.append(cardContent);
+    var cardAction = $("<div class='card-action'></div>");
+    cardAction.append("<span class='red-text text-accent-4 left'>" + formatDecimal(product.purchase_price,',','.') + "</span>");
+    cardAction.append("<span class='left'>$</span>");
+    cardStacked.append(cardAction);
+    productCard.append(cardImage);
+    productCard.append(cardStacked);
+    return productCard;
+}
+
+function getDescriptionAsList (description) {
+    var desc = description.split('%n');
+    var list = $("<ul></ul>");
+    for (var i=0;i<desc.length;i++) {
+        list.append("<li class='fontsmall grey-text'>"+desc[i]+"</li>");
+    }
+    return list;
+}
+
+function updateProducts (products) {
+    var root = $("#productsList");
+    if (products != null) {
+        for (var i=0;i<products.length;i++) {
+            products[i] = updateProduct(products[i]);
+        }
+    }
+    root.children().remove();
+    if (products != null) {
+        for (i=0;i<products.length;i++) {
+            var product = $("<div class='col s6 no-margin'></div>").append(cartProductFromAmazon(products[i], i));
+            root.append(product);
+        }
+    }
 }
 
 function getFromAmazon () {
-    var root = $("#root");
     var keywords = document.getElementById("keywords").value;
     var indexSearch = document.getElementById("indexSearch").value;
     $.ajax({
@@ -99,68 +68,110 @@ function getFromAmazon () {
         dataType: "json",
         contentType: "application/json",
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
-        success: function (productsFromAmazon) {
-            root.children().remove();
-            if (productsFromAmazon!=null) {
-                for (var i = 0; i < productsFromAmazon.length; i++) {
-                    root.append(printProductFromAmazon(productsFromAmazon[i], i));
-                }
-            } else {
-                printFlashMessage("Ничего не найдено по этому запросу","info");
-            }
+        success: function (products) {
+            productsFromAmazon = products;
+            updateProducts(productsFromAmazon);
+        },
+        error: getErrorMsg
+    });
+}
+
+function updateProduct (product) {
+    if (product.name == null) product.name = getPropertyOfProduct("name", product.asin);
+    if (product.purchase_price == null) product.purchase_price = getPropertyOfProduct("purchase_price", product.asin);
+    if (product.small_image == null) product.small_image = getPropertyOfProduct("small_image", product.asin);
+    if (product.medium_image == null) product.medium_image = getPropertyOfProduct("medium_image", product.asin);
+    if (product.large_image == null) product.large_image = getPropertyOfProduct("large_image", product.asin);
+    if (product.description == null) product.description = getPropertyOfProduct("description", product.asin);
+    if (product.height == null) product.height = getPropertyOfProduct("height", product.asin);
+    if (product.length == null) product.length = getPropertyOfProduct("length", product.asin);
+    if (product.width == null) product.width = getPropertyOfProduct("width", product.asin);
+    if (product.weight == null) product.weight = getPropertyOfProduct("weight", product.asin);
+    if (product.units_l == null) product.units_l = getPropertyOfProduct("units_l", product.asin);
+    if (product.units_w == null) product.units_w = getPropertyOfProduct("units_w", product.asin);
+    if (product.supplier == null) product.supplier = {name: "amazon.com"};
+    if (product.category == null) product.category = {name: getSelectedIndex()};
+    return product;
+}
+
+function updateImages(products) {
+    for (var i=0;i<productsFromAmazon.length;i++) {
+        var asin = productsFromAmazon[i].asin;
+        var small_image = findProperty(products, "small_image", asin);
+        var medium_image = findProperty(products, "medium_image", asin);
+        var large_image = findProperty(products, "large_image", asin);
+        if (small_image != null) productsFromAmazon[i].small_image = small_image;
+        if (medium_image != null) productsFromAmazon[i].medium_image = medium_image;
+        if (large_image != null) productsFromAmazon[i].large_image = large_image;
+    }
+}
+
+function updatePrices(products) {
+    for (var i=0;i<productsFromAmazon.length;i++) {
+        var asin = productsFromAmazon[i].asin;
+        var price = findProperty(products, "purchase_price", asin);
+        if (price != null) {
+            productsFromAmazon[i].purchase_price = price;
+            productsFromAmazon[i].retail_price = price*1.1;
+        }
+    }
+}
+
+function findProperty(products, nameProperty, asin) {
+    for (var i=0;i<products.length;i++) {
+        if (products[i].asin == asin)
+            return products[i][nameProperty];
+    }
+    return null;
+}
+
+function getImages() {
+    var asins = getAsins();
+    $.ajax({
+        url: "/itemsImages",
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
+        data: JSON.stringify(asins, null, "\t"),
+        success: function (products) {
+            updateImages(products);
+            updateProducts(productsFromAmazon);
+        },
+        error: getErrorMsg
+    });
+}
+
+function getPrices() {
+    var asins = getAsins();
+    $.ajax({
+        url: "/itemsPrices",
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
+        data: JSON.stringify(asins, null, "\t"),
+        success: function (products) {
+            updatePrices(products);
+            updateProducts(productsFromAmazon);
         },
         error: getErrorMsg
     });
 }
 
 function applyToBase () {
-    var asins = getAsins();
-    console.log(asins);
-    for (var i=0;i<asins.length;i++) {
-        $.ajax({
-            url: "/itemLookup/"+asins[i],
-            type: "GET",
-            dataType: "json",
-            contentType: "application/json",
-            headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
-            success: function (product) {
-                if (product.purchase_price == null) {
-                    printFlashMessage("Не удается получить информацию о цене продукта с ASIN="+product.asin, "failure");
-                }
-                if (product.small_image == null && product.medium_image == null && product.large_image == null) {
-                    printFlashMessage("Не удается получить информацию о изображении продукта с ASIN="+product.asin, "failure");
-                }
-                product.name = getPropertyOfProduct("name", product.asin);
-                product.description = getPropertyOfProduct("description", product.asin);
-                product.height = getPropertyOfProduct("height", product.asin);
-                product.length = getPropertyOfProduct("length", product.asin);
-                product.width = getPropertyOfProduct("width", product.asin);
-                product.weight = getPropertyOfProduct("weight", product.asin);
-                product.units_l = getPropertyOfProduct("units_l", product.asin);
-                product.units_w = getPropertyOfProduct("units_w", product.asin);
-                product.supplier = {
-                    name: "amazon.com"
-                };
-                product.category = {
-                  name: getSelectedIndex()
-                };
-                console.log(product);
-                $.ajax({
-                    url: "/product",
-                    type: "POST",
-                    dataType: "json",
-                    contentType: "application/json",
-                    data: JSON.stringify(product, null, "\t"),
-                    headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
-                    success: function (product) {
-                        printFlashMessage("Продукт (id="+product.id+", ASIN="+product.asin+") успешно сохранен в базе", "success");
-                    },
-                    error: getErrorMsg
-                });
-            },
-            error: getErrorMsg
-        });
-    }
+    $.ajax({
+        url: "/products",
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify(productsFromAmazon, null, "\t"),
+        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
+        success: function (products) {
+            printFlashMessage("Все "+products.length+" продуктов успешно сохранены в базе", "success");
+        },
+        error: getErrorMsg
+    });
 }
 
 function getSelectedIndex () {
@@ -172,31 +183,9 @@ function getSelectedIndex () {
 
 function getAsins () {
     var asins = [];
-    var count = 0;
-    var id;
-    while (true) {
-        id = "asin#"+count;
-        if (document.getElementById(id)!=null)
-            asins.push(document.getElementById(id).innerText);
-        else
-            return asins;
-        count++;
-    }
-}
-
-function getProduct (asin) {
-    var product = {
-        asin : asin,
-        name: getPropertyOfProduct("name", asin),
-        description: getPropertyOfProduct("description", asin),
-        height: getPropertyOfProduct("height", asin),
-        length: getPropertyOfProduct("length", asin),
-        width: getPropertyOfProduct("width", asin),
-        weight: getPropertyOfProduct("weight", asin),
-        units_l: getPropertyOfProduct("units_l", asin),
-        units_w: getPropertyOfProduct("units_w", asin)
-    };
-    return product;
+    for (var i=0;i<productsFromAmazon.length;i++)
+        asins.push(productsFromAmazon[i].asin);
+    return asins;
 }
 
 function getPropertyOfProduct (nameOfProperty, asin) {
@@ -213,7 +202,9 @@ function deleteProduct (id) {
             contentType: "application/json",
             headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
             success: function () {
-                document.getElementById("product#" + id).remove();
+                document.getElementById("productCard #" + id).remove();
+                var $total = document.getElementById("countProducts");
+                $total.innerText = parseInt($total.innerText)-1;
                 printFlashMessage("Продукт (id=" + id + ") успешно удален из базы", "success");
             },
             error: getErrorMsg
@@ -224,16 +215,6 @@ function deleteProduct (id) {
 }
 
 function getCostDelivery(id) {
-    // var pickupRequest = {
-    //     weight: product.weight,
-    //     dimensions: product.height + "x" + product.length + "x" + product.width,
-    //     delivery_pickup: "msk_1",
-    //     insurance: "false",
-    //     items_value: product.retail_price,
-    //     units_length: product.units_l,
-    //     units_weight: product.units_w
-    // };
-
     $.ajax({
         url: "/costpickup/"+id,
         type: "GET",

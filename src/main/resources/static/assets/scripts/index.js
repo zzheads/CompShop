@@ -1,3 +1,6 @@
+var allProducts = [];
+console.log("index.js");
+
 function getAllProducts() {
     var productList = $("#productsList");
     $.ajax({
@@ -6,7 +9,8 @@ function getAllProducts() {
         dataType: "json",
         contentType: "application/json",
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
-        success: function (allProducts) {
+        success: function (products) {
+            allProducts = products;
             productList.children().remove();
             if (allProducts!=null) {
                 for (var i = 0; i < allProducts.length; i++) {
@@ -20,6 +24,7 @@ function getAllProducts() {
 }
 
 function addProductToCart (buttonId) {
+    console.log(buttonId);
     var id = getIdFromElementId(buttonId);
     var product ={
         id: id
@@ -86,7 +91,7 @@ function getIdFromElementId (elementId) {
 
 function getHtmlProduct (product) {
     var productCard = $("<div id='productCard #" + product.id + "' class='card horizontal'></div>");
-    var cardImage = $("<div class='card-image'>");
+    var cardImage = $("<div class='card-image'></div>");
     cardImage.append("<div style='float: left; width: 150px; height: 150px; overflow: hidden; background: url(\"" + product.medium_image + "\") center center no-repeat; margin: 20px;'></div>");
     var cardStacked = $("<div class='card-stacked'></div>");
     cardStacked.append("<div class='card-content'><h6>" + product.name + "</h6></div>");

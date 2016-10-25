@@ -53,6 +53,17 @@ public class QwintryApi {
     @RequestMapping(path = "/costpickup/{id}", method = RequestMethod.GET, produces = {"application/json"})
     public @ResponseBody String costPickup (@PathVariable Long id) throws Exception {
         Product product = productService.findById(id);
+        return getDeliveryCost(product, shoppingCart, qwintryService);
+    }
+
+    @RequestMapping(path = "/costpickup_bycityname/{city}", method = RequestMethod.GET, produces = {"application/json"})
+    public @ResponseBody String calculateDeliveryForCity (@PathVariable String city) throws Exception {
+        City newCityForDelivery = cityService.findByCityName(city);
+        shoppingCart.setCity(newCityForDelivery);
+        return costPickupAll();
+    }
+
+    public static String getDeliveryCost (Product product, ShoppingCart shoppingCart, QwintryService qwintryService) throws Exception {
         City cityForDelivery = shoppingCart.getCity();
         if (cityForDelivery.getPickupPoints() == null) {
             cityForDelivery.setPickupPoints(qwintryService.getLocationsByCity(cityForDelivery.getName()));
@@ -65,12 +76,5 @@ public class QwintryApi {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @RequestMapping(path = "/costpickup_bycityname/{city}", method = RequestMethod.GET, produces = {"application/json"})
-    public @ResponseBody String calculateDeliveryForCity (@PathVariable String city) throws Exception {
-        City newCityForDelivery = cityService.findByCityName(city);
-        shoppingCart.setCity(newCityForDelivery);
-        return costPickupAll();
     }
 }

@@ -383,6 +383,21 @@ public class Product implements Serializable {
         }
     }
 
+    private static class ListProductDeserializer implements JsonDeserializer<List<Product>> {
+        @Override
+        public List<Product> deserialize(JsonElement json, java.lang.reflect.Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            ProductDeserializer productDeserializer = new ProductDeserializer();
+            if (json!=null) {
+                List<Product> products = new ArrayList<>();
+                for (JsonElement jsonElement : json.getAsJsonArray()) {
+                    products.add(productDeserializer.deserialize(jsonElement, Product.class, context));
+                }
+                return products;
+            }
+            return null;
+        }
+    }
+
     public static class ProductDeserializer implements JsonDeserializer<Product> {
         @Override
         public Product deserialize(JsonElement json, java.lang.reflect.Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -427,6 +442,12 @@ public class Product implements Serializable {
     public static String toJson(List<Product> products) {
         Gson gson = new GsonBuilder().registerTypeAdapter(List.class, new ListProductSerializer()).setPrettyPrinting().create();
         return gson.toJson(products, List.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Product> fromJsonList (String json) {
+        Gson gson = new GsonBuilder().registerTypeAdapter(List.class, new ListProductDeserializer()).setPrettyPrinting().create();
+        return gson.fromJson(json, List.class);
     }
 
     static Product fromJson(JsonElement jsonElement) {
