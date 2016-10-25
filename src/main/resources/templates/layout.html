@@ -19,9 +19,9 @@
 </head>
 <body>
 
-<div th:fragment="user-row" class="row admin grey">
+<div th:fragment="user-row" class="row admin grey lighten-1">
     <div class="col s12">
-        <p class="right">
+        <p class="right black-text">
             <a sec:authorize="hasAnyRole('ADMIN', 'DEVELOPER')" th:href="@{/admin}">
                 <span>admin panel</span> &bullet;
             </a>
@@ -168,10 +168,10 @@
 <div th:fragment="product-detail-row" class="row">
     <div class="row col s9 offset-s1 white z-depth-3">
         <h5 class="card-title black-text bold" th:text="${product.name}"></h5>
-        <div class="col s5">
-            <img th:src="${product.largeImage}" class="materialboxed" width="100%"/>
+        <div class="col s6">
+            <img th:src="${product.largeImage}" class="materialboxed" width="60%"/>
         </div>
-        <div class="col s7">
+        <div class="col s6">
             <ul>
                 <li>
                     <blockquote th:text="${product.description}"></blockquote>
@@ -238,7 +238,7 @@
                 </p>
             </div>
             <div class="col l6 s12">
-                <h5 class="grey-text text-lighten-3">Настройки</h5>
+                <h5 class="grey-text text-lighten-3">Оферта</h5>
                 <p class="grey-text text-lighten-3">
                     Информация, указанная на сайте, не является публичной офертой. Информация о товарах, их технических свойствах и характеристиках, ценах является предложением ClickLogistic делать оферты. Акцептом ClickLogistic полученной оферты является подтверждение заказа с указанием товара и его цены. Сообщение ClickLogistic о цене заказанного товара, отличающейся от указанной в оферте, является отказом ClickLogistic от акцепта и одновременно офертой со стороны ClickLogistic. Информация о технических характеристиках товаров, указанная на сайте, может быть изменена производителем в одностороннем порядке.Изображения товаров на фотографиях, представленных в каталоге на сайте, могут отличаться от оригиналов. Информация о цене товара, указанная в каталоге на сайте, может отличаться от фактической к моменту оформления заказа на соответствующий товар. Подтверждением цены заказанного товара является сообщение ClickLogistic о цене такого товара. Администрация Сайта не несет ответственности за содержание сообщений и других материалов на сайте, их возможное несоответствие действующему законодательству, за достоверность размещаемых Пользователями материалов, качество информации и изображений.
                 </p>
@@ -252,10 +252,10 @@
             <div class="col l3 s12">
                 <h5 class="grey-text text-lighten-3">Контакты</h5>
                 <ul>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                    <li><a class="grey-text text-lighten-3" href="email: zzheads@gmail.com">zzheads@gmail.com</a></li>
+                    <li><a class="grey-text text-lighten-3" href="www.facebook.com/zzheads"><img src="../assets/images/facebook-64.png" height="20px"/></a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!"><img src="../assets/images/gplus-64.png" height="20px"/></a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!"><img src="../assets/images/instagram-64.png" height="20px"/></a></li>
                 </ul>
             </div>
         </div>
