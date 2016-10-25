@@ -1,17 +1,18 @@
 package com.zzheads.CompShop.web.api;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.zzheads.CompShop.model.*;
-import com.zzheads.CompShop.service.CategoryService;
-import com.zzheads.CompShop.service.ProductService;
-import com.zzheads.CompShop.service.QwintryService;
-import com.zzheads.CompShop.service.SupplierService;
+import com.zzheads.CompShop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.List;
 
 import static com.zzheads.CompShop.web.api.QwintryApi.getDeliveryCost;
@@ -73,14 +74,6 @@ public class ProductApi {
     public @ResponseBody String findById (@PathVariable Long id) {
         Product product = productService.findById(id);
         return product.toJson();
-    }
-
-    @RequestMapping(path = "/details/{id}", method = RequestMethod.GET)
-    @ResponseStatus (HttpStatus.OK)
-    public String detailsById (@PathVariable Long id, Model model) {
-        Product product = productService.findById(id);
-        model.addAttribute("product", product);
-        return "detail";
     }
 
     @RequestMapping(path = "/product_by_category/{id}", method = RequestMethod.GET, produces = {"application/json"})

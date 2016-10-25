@@ -19,7 +19,7 @@
 </head>
 <body>
 
-<div th:fragment="user-row" class="row admin">
+<div th:fragment="user-row" class="row admin grey">
     <div class="col s12">
         <p class="right">
             <a sec:authorize="hasAnyRole('ADMIN', 'DEVELOPER')" th:href="@{/admin}">
@@ -110,31 +110,34 @@
     </div>
 </nav>
 
-<div th:fragment="header-row" class="row orange darken-2">
-    <div class="col s2 offset-s2">
-        <select id="selectCity" onchange="getSelectedCity(this.value)" class="input-field browser-default little orange darken-1 white-text">
-            <option th:if="${city} != ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}"></option>
-            <option th:if="${city} == ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}" selected="selected"></option>
-        </select>
-    </div>
-    <div class="col s2">
-        <select id="selectSortingOrder" onchange="changeSortingOrder(this.value)" class="input-field browser-default little orange darken-1 white-text">
-            <option th:if="${sorting_order} == 'по Имени'" value="по Имени" selected="selected">по Имени</option>
-            <option th:if="${sorting_order} != 'по Имени'" value="по Имени">по Имени</option>
-            <option th:if="${sorting_order} == 'по Цене'" value="по Цене" selected="selected">по Цене</option>
-            <option th:if="${sorting_order} != 'по Цене'" value="по Цене">по Цене</option>
-        </select>
-    </div>
-    <div class="col s2">
-        <select id="selectCategory" class="input-field browser-default little orange darken-1 white-text" onchange="getSelectedCategory(this.value)">
-            <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}"></option>
-        </select>
-    </div>
-    <div class="col s2 offset-s1">
-        <a href="" class="btn-flat white-text">
-            <i align="middle" class="material-icons">shopping_cart</i>
-            <span id="shoppingCart" th:inline="text">[[${total}]] руб</span>
-        </a>
+<div th:fragment="header-row" class="row col s12 headercolor">
+    <div class="container">
+        <div class="valign-wrapper">
+
+            <div class="col s2 valign">
+                <select id="selectCity" onchange="getSelectedCity(this.value)" class="input-field headercolor white-text">
+                    <option th:if="${city} != ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}"></option>
+                    <option th:if="${city} == ${city_delivery}" th:each="city : ${cities}" th:value="${city}" th:text="${city}" selected="selected"></option>
+                </select>
+            </div>
+            <div class="col s2 valign">
+                <select id="selectSortingOrder" onchange="changeSortingOrder(this.value)" class="input-field headercolor white-text">
+                    <option th:if="${sorting_order} == 'по Имени'" value="по Имени" selected="selected">по Имени</option>
+                    <option th:if="${sorting_order} != 'по Имени'" value="по Имени">по Имени</option>
+                    <option th:if="${sorting_order} == 'по Цене'" value="по Цене" selected="selected">по Цене</option>
+                    <option th:if="${sorting_order} != 'по Цене'" value="по Цене">по Цене</option>
+                </select>
+            </div>
+            <div class="col s2 valign">
+                <select id="selectCategory" class="input-field headercolor white-text" onchange="getSelectedCategory(this.value)">
+                    <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}"></option>
+                </select>
+            </div>
+            <div class="col s2 offset-s4 valign" id="shoppingCart">
+                <a class="waves-effect waves-teal btn-flat no-margin white-text right" th:inline="text"><i class="material-icons right">shopping_cart</i>[[@{${total}+' руб'}]]</a>
+            </div>
+
+        </div>
     </div>
 </div>
 
@@ -143,22 +146,6 @@
         <a href="" class="btn-flat white-text">
             <span id="countProducts" th:inline="text">[[${count}]]</span>
         </a>
-    </div>
-</div>
-
-<div th:fragment="product-row" class="card horizontal">
-    <div class="card-image">
-        <div th:style="'float: left; width: 150px; height: 150px; overflow: hidden; background: url('+${product.mediumImage}+') center center no-repeat; margin: 20px;'"></div>
-    </div>
-    <div class="card-stacked">
-        <div class="card-content">
-            <h6 th:inline="text">[[${product.name}]]</h6>
-        </div>
-        <div class="card-action">
-            <span class="red-text text-accent-4 left" th:text="@{${#numbers.formatDecimal(product.retailPrice*dollar_rate*amazon_percent,3,'COMMA',0,'POINT')}+' '}"> </span>
-            <span class="left" th:inline="text">. руб</span>
-            <a th:id="@{'buyButton #'+${product.id}}" href="#" class="btn-flat orange darken-3 white-text right" onclick="addProductToCart(this.id)">Купить</a>
-        </div>
     </div>
 </div>
 
@@ -189,9 +176,9 @@
                 <li>
                     <blockquote th:text="${product.description}"></blockquote>
                 </li>
-                <li th:text="@{'Размеры: '+${product.length}+'x'+${product.width}+'x'+${product.height}+' '+${product.unitsL}"></li>
+                <li th:text="@{'Размеры: '+${product.length}+'x'+${product.width}+'x'+${product.height}+' '+${product.unitsL}}"></li>
                 <li th:text="@{'Вес: '+${product.weight}+' '+${product.unitsW}}"></li>
-                <li th:text="@{'Категория: '+${product.category.name}">
+                <li th:text="@{'Категория: '+${product.category.name}}">
                     Производитель: GeForce
                 </li>
                 <li th:text="@{'Продавец: '+${product.supplier.name}}">
@@ -209,11 +196,8 @@
                 </li>
             </ul>
         </div>
-
     </div>
-
 </div>
-
 
 <div th:fragment="product-row-admin" class="card horizontal">
     <div class="card-image">
@@ -244,16 +228,16 @@
     </div>
 </div>
 
-<footer th:fragment="footer-row" class="page-footer light-blue darken-4">
+<footer th:fragment="footer-row" class="page-footer light-blue darken-2">
     <div class="container">
         <div class="row">
-            <div class="col l6 s12">
+            <div class="col l3 s12">
                 <h5 class="grey-text text-lighten-3">О нас</h5>
                 <p class="grey-text text-lighten-3">Доставляем товары из крупнейших магазинов США, таких как amazon.com, apple.com. Срок поставки зависит от конкретного товара, в среднем составляет не более 2-х недель с момента оплаты. Гарантия на комплектующие - от года до трех лет, на телефоны iPhone - 1 год, с момента поставки товара."
                     +"Указанная стоимость товара включает в себя все расходы по транспортировке, растамаживанию и пр.
                 </p>
             </div>
-            <div class="col l3 s12">
+            <div class="col l6 s12">
                 <h5 class="grey-text text-lighten-3">Настройки</h5>
                 <p class="grey-text text-lighten-3">
                     Информация, указанная на сайте, не является публичной офертой. Информация о товарах, их технических свойствах и характеристиках, ценах является предложением ClickLogistic делать оферты. Акцептом ClickLogistic полученной оферты является подтверждение заказа с указанием товара и его цены. Сообщение ClickLogistic о цене заказанного товара, отличающейся от указанной в оферте, является отказом ClickLogistic от акцепта и одновременно офертой со стороны ClickLogistic. Информация о технических характеристиках товаров, указанная на сайте, может быть изменена производителем в одностороннем порядке.Изображения товаров на фотографиях, представленных в каталоге на сайте, могут отличаться от оригиналов. Информация о цене товара, указанная в каталоге на сайте, может отличаться от фактической к моменту оформления заказа на соответствующий товар. Подтверждением цены заказанного товара является сообщение ClickLogistic о цене такого товара. Администрация Сайта не несет ответственности за содержание сообщений и других материалов на сайте, их возможное несоответствие действующему законодательству, за достоверность размещаемых Пользователями материалов, качество информации и изображений.

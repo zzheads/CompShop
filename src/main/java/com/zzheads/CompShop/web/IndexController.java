@@ -5,6 +5,7 @@ import com.zzheads.CompShop.model.*;
 import com.zzheads.CompShop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,9 +13,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -144,6 +143,14 @@ public class IndexController {
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String index (Model model) {
         return "index";
+    }
+
+    @RequestMapping(path = "/details/{id}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String detailsById (@PathVariable Long id, Model model) {
+        Product product = productService.findById(id);
+        model.addAttribute("product", product);
+        return "detail";
     }
 
     @RequestMapping(path = "/admin", method = RequestMethod.GET)

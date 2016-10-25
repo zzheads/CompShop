@@ -14,13 +14,22 @@ function getAllProducts() {
             productList.children().remove();
             if (allProducts!=null) {
                 for (var i = 0; i < allProducts.length; i++) {
-                    var product = $("<div class='col s6 no-margin'></div>").append(getHtmlProduct(allProducts[i]));
+                    var product = $("<div id='productCard #"+allProducts[i].id+"' class='col s6 no-margin'></div>");
+                    var ahref = $("<a href='/details/'"+allProducts[i].id+"'></a>").append(getHtmlProduct(allProducts[i]));
+                    product.append(ahref);
                     productList.append(product);
                 }
             }
         },
         error: getErrorMsg
     });
+}
+
+function updateShoppingCart(newTotal) {
+    var $divShoppingCart = $("#shoppingCart");
+    var newTotalString = formatDecimal(newTotal,',','.') + " руб";
+    var newHtml = "<a class='waves-effect waves-teal btn-flat no-margin white-text right'><i class='material-icons right'>shopping_cart</i>"+newTotalString+"</a>";
+    $divShoppingCart.html(newHtml);
 }
 
 function addProductToCart (buttonId) {
@@ -49,7 +58,7 @@ function addProductToCart (buttonId) {
                 contentType: "application/json",
                 success: function (delivery_cost) {
                     console.log("Check here");
-                    document.getElementById("shoppingCart").innerText = (getTotal(purchases) * getAmazonPercent() * getDollarRate() + delivery_cost * getDollarRate()).toFixed(0).toLocaleUpperCase() + " RUB";
+                    updateShoppingCart(getTotal(purchases) * getAmazonPercent() * getDollarRate() + delivery_cost * getDollarRate());
                 },
                 error: getErrorMsg
             });

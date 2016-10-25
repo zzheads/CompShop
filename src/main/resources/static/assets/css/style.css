@@ -57,3 +57,23 @@
     color: #f3f6ee;
 }
 
+.navcolor {
+    background: #558C89;
+}
+.headercolor {
+    background: #424242;
+}
+.footercolor {
+    background: #558C89;
+}
+.backgroundcolor {
+    background: #ECECEA;
+}
+.buttoncolor {
+    background: #D9853B;
+}
+.myselect {
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+}
