@@ -34,6 +34,12 @@ function updateShoppingCart(newTotal) {
     $divShoppingCart.html(newHtml);
 }
 
+function updateMakePurchaseButton(purchases) {
+    var $button = $("#makePuchaseButton");
+    var newString = "Оплатить "+purchases.length+" на сумму "+formatDecimal(getTotal(purchases)*dollar_rate*amazon_percent, ',','.')+" руб";
+    $button.html(newString);
+}
+
 function addProductToCart (buttonId) {
     console.log(buttonId);
     var id = getIdFromElementId(buttonId);
@@ -155,9 +161,10 @@ function deletePurchaseCard (indexId) {
 
 function updateCart (inputId) {
     var index = getIdFromElementId(inputId);
-    var updatedQuantity = document.getElementById(inputId).value;
+    var updatedQuantity = parseInt(document.getElementById(inputId).value);
+    if (isNaN(updatedQuantity)) return;
     var data = {
-        index: index,
+        productid: index,
         quantity: updatedQuantity
     };
 
@@ -174,6 +181,7 @@ function updateCart (inputId) {
                 deletePurchaseCard(index);
             }
             updateShoppingCart(getTotal(purchases)*dollar_rate*amazon_percent);
+            updateMakePurchaseButton(purchases);
         },
         error: getErrorMsg
     });

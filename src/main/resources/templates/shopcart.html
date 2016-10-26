@@ -9,7 +9,18 @@
 <div th:replace="layout::flash"></div>
 
 <div class="container">
-    <div th:id="@{'purchaseCard #'+${stat.index}}" th:each="purchase, stat : ${purchases}">
+
+    <div class="row col s12">
+
+        <div class="fixed-action-btn horizontal" style="top: 15%; right: 0%;">
+            <a href="/checkout" class="btn-large red valign-wrapper">
+                <i class="large material-icons valign left">shop</i><span id="makePuchaseButton" th:text="@{'Оплатить '+${#arrays.length(purchases)}+' на сумму '+${#numbers.formatDecimal(total,1,'POINT',0,'COMMA')}+' руб'}"></span>
+            </a>
+        </div>
+
+    </div>
+
+    <div th:id="@{'purchaseCard #'+${purchase.product.id}}" th:each="purchase : ${purchases}">
         <div th:each="product : ${purchase.product}">
             <div th:replace="layout::product-detail-row"></div>
         </div>

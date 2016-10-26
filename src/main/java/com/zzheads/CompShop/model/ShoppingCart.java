@@ -88,6 +88,19 @@ public class ShoppingCart {
         updatePurchase(purchase.getProduct(), purchase.getQuantity());
     }
 
+    public Purchase getByProductId(long id) {
+        if (purchases == null) return null;
+        for (Purchase purchase : purchases) {
+            if (purchase.getProduct().getId().equals(id))
+                return purchase;
+        }
+        return null;
+    }
+
+    public void removePurchaseByProductId(long id) {
+        purchases.remove(getByProductId(id));
+    }
+
     public double evaluateTotal () {
         if (purchases == null) return 0;
         double total = 0;

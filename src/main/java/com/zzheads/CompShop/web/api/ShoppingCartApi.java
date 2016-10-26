@@ -42,10 +42,14 @@ public class ShoppingCartApi {
     public @ResponseBody String updateShoppingCart (@RequestBody String jsonString) {
         Gson gson = new Gson();
         UpdateCart updateCart = gson.fromJson(jsonString, UpdateCart.class);
-        if (updateCart.getQuantity()>0)
-            shoppingCart.getPurchases().get(updateCart.getIndex()).setQuantity(updateCart.getQuantity());
-        else
-            shoppingCart.getPurchases().remove(updateCart.getIndex());
+        long productId = updateCart.getProductid();
+        int quantity = updateCart.getQuantity();
+
+        if (quantity>0) {
+            shoppingCart.getByProductId(productId).setQuantity(quantity);
+        } else {
+            shoppingCart.removePurchaseByProductId(productId);
+        }
         return Purchase.toJson(shoppingCart.getPurchases());
     }
 
@@ -57,15 +61,23 @@ public class ShoppingCartApi {
     }
 
     private class UpdateCart {
-        private int index;
+        private int productid;
         private int quantity;
 
-        int getIndex() {
-            return index;
+        public int getProductid() {
+            return productid;
         }
 
-        int getQuantity() {
+        public void setProductid(int productid) {
+            this.productid = productid;
+        }
+
+        public int getQuantity() {
             return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
         }
     }
 }

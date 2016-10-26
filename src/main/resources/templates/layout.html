@@ -187,13 +187,13 @@
                 <a th:id="@{'buyButton #'+${product.id}}" href="#" class="btn-flat orange darken-3 white-text right" onclick="addProductToCart(this.id)">Купить</a>
             </div>
 
-            <div th:if="${purchase != null}" class="row"> <!-- Проверяем корзину-->
-                <div class="input-field col s2">
-                    <input th:value="${purchase.quantity}" th:id="@{'quantityItems #'+${stat.index}}" type="text" class="validate" oninput="updateCart(this.id)"/>
-                    <label class="active" th:for="@{'quantityItems #'+${stat.index}}">Количество</label>
+            <div th:if="${purchase != null}" class="row valign-wrapper"> <!-- Проверяем корзину-->
+                <div class="input-field col s2 valign">
+                    <input th:value="${purchase.quantity}" th:id="@{'quantityItems #'+${product.id}}" type="text" class="validate" oninput="updateCart(this.id)"/>
+                    <label class="active" th:for="@{'quantityItems #'+${product.id}}">Количество</label>
                 </div>
-                <div class="col s4">
-                    <a th:id="@{'deleteButton #'+${stat.index}}" href="#" class="btn-flat orange darken-3 white-text right" onclick="deleteProductFromCart(this.id)">Удалить</a>
+                <div class="col s4 valign right">
+                    <a th:id="@{'deleteButton #'+${product.id}}" href="#" class="btn-flat orange darken-3 white-text right" onclick="deleteProductFromCart(this.id)">Удалить</a>
                 </div>
             </div>
         </div>
