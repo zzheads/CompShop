@@ -1,8 +1,10 @@
 var allProducts = [];
+var productsList = $("#productsList");
+var dollar_rate = getDollarRate();
+var amazon_percent = getAmazonPercent();
 console.log("index.js");
 
 function getAllProducts() {
-    var productList = $("#productsList");
     $.ajax({
         url: "/product",
         type: "GET",
@@ -42,7 +44,6 @@ function addProductToCart (buttonId) {
         product: product,
         quantity: 1
     };
-
     $.ajax({
         url: "/add_purchase",
         type: "POST",
@@ -51,36 +52,7 @@ function addProductToCart (buttonId) {
         data: JSON.stringify(purchase, null, "\t"),
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         success: function (purchases) {
-            $.ajax({
-                url: "/delivery_cost",
-                type: "GET",
-                dataType: "json",
-                contentType: "application/json",
-                success: function (delivery_cost) {
-                    console.log("Check here");
-                    updateShoppingCart(getTotal(purchases) * getAmazonPercent() * getDollarRate() + delivery_cost * getDollarRate());
-                },
-                error: getErrorMsg
-            });
-        },
-        error: getErrorMsg
-    });
-}
-
-function getProductDetails (buttonId) {
-    var id = getIdFromElementId(buttonId);
-    var root = $("#root");
-    $.ajax({
-        url: "/product/"+id,
-        type: "GET",
-        dataType: "json",
-        contentType: "application/json",
-        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
-        success: function (product) {
-            root.children().remove();
-            root.append("<div class='grid-100 empty-box-20'>");
-            root.append(getHtmlDetailProduct(product));
-            root.append("</div>");
+            updateShoppingCart(getTotal(purchases) * getAmazonPercent() * getDollarRate());
         },
         error: getErrorMsg
     });
@@ -114,6 +86,45 @@ function getHtmlProduct (product) {
     return productCard;
 }
 
+function getHtmlProductDetails (product) {
+    var $divider = $("<div class='divider'></div>");
+    var $br = $("<br/>");
+    var $div = $("<div class='row'></div>");
+    $div.append("<div class='row col s10 offset-s1 white z-depth-3'></div>");
+    $div.append("<h5 class='card-title black-text bold'>"+product.name+"</h5>");
+    $div.append($divider);
+    $div.append($br);
+    var $div_image = $("<div class='col s4 offset-s1 valign-wrapper'><img src='"+product.large_image+"' class='materialboxed valign' width='100%'/></div>");
+    var $div_desc = $("<div class='col s5 offset-s1'></div>");
+    var $row_1 = $("<div class='row'><div class='chip teal lighten-3 left'>asin: "+product.asin+"</div></div>");
+    var $row_2 = $("<div class='row no-margin'><blockquote>"+getDescriptionAsList(product.description)+"</blockquote></div>");
+    var $row_3 = $("<div class='row no-margin'><div class='chip'>"+'Размеры: '+product.length+'x'+product.width+'x'+product.height+' '+product.units_l+"</div></div>");
+    var $row_4 = $("<div class='row no-margin'><div class='chip'>"+'Вес: '+product.weight+' '+product.units_w+"</div></div>");
+    var $row_5 = $("<div class='row no-margin'><div class='chip'>"+'Категория: '+product.category.name+"</div></div>");
+    var $row_6 = $("<div class='row no-margin'><div class='chip'>"+'Продавец: '+product.supplier.name+"</div></div>");
+    var $row_7 = $("<div class='row no-margin'><div class='right'><span>Цена: </span><span class='red-text bold'>"+formatDecimal(product.retail_price*dollar_rate*amazon_percent,',','.')+' '+"</span><span>руб</span></div></div>");
+    var $row_8 = $("<div class='row no-margin'><div class='right'><span>Цена с доставкой: </span><span class='red-text'>"+formatDecimal(product.retail_price*dollar_rate*amazon_percent+product.delivery_msk,',','.')+' '+"</span><span>руб</span></div></div>");
+    var $row_9 = $("<div class='row'><div class='divider'></div></div>");
+    var $row_10 = $("<div class='row'></div>");
+    $row_10.append("<div class='input-field col s2'><input value='"+purchase.quantity+"' id='"+'quantityItems #'+stat.index+"' type='text' class='validate' oninput='updateCart(this.id)'/>" +
+        "<label class='active' for='"+'quantityItems #'+stat.index+"'>Количество</label></div>");
+    $row_10.append("<div class='col s4'><a id='"+'deleteButton #'+stat.index+"' href='#' class='btn-flat orange darken-3 white-text right' onclick='deleteProductFromCart(this.id)'>Удалить</a></div>");
+
+    $div_desc.append($row_1);
+    $div_desc.append($row_2);
+    $div_desc.append($row_3);
+    $div_desc.append($row_4);
+    $div_desc.append($row_5);
+    $div_desc.append($row_6);
+    $div_desc.append($row_7);
+    $div_desc.append($row_8);
+    $div_desc.append($row_9);
+    $div_desc.append($row_10);
+    $div.append($div_image);
+    $div.append($div_desc);
+    return $div;
+}
+
 function getThumbnail (product, detailed) {
     var src_small = product.small_image, src_medium = product.medium_image, src_large = product.large_image;
     var small_res = "width: 80px; height: 80px;", large_res = "width: 180px; height: 180px;";
@@ -129,137 +140,6 @@ function getThumbnail (product, detailed) {
     return htmlString;
 }
 
-function getHtmlDetailProduct(product) {
-    var category = JSON.parse(product.category);
-    var supplier = JSON.parse(product.supplier);
-    var toRubles = getAmazonPercent()*getDollarRate();
-    var description = getDescription(product.description);
-    var htmlString =
-        "<div id='product#"+product.id+"' class='grid-100 lightgray-box'>"
-            +"<div class='grid-20'>"
-                +getThumbnail(product, true)
-            +"</div>"
-            +"<div class='grid-60'>"
-                +"<p>("+category.name+"):</p>"
-                +"<h2 class='product-title'>"+product.name+"</h2>";
-
-    htmlString = htmlString + "<h4><ul>"
-    for (var i=0;i<description.length;i++) {
-        htmlString = htmlString + "<li>" + description[i] + "</li>";
-    }
-    htmlString = htmlString + "</ul></h4>"
-
-    var city_delivery = document.getElementById("selectCity").value;
-
-    htmlString = htmlString + "<p><table><tr><td>Цена: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
-                +"<p><table><tr><td>Доставка (до "+city_delivery+"): </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
-                +"<p><table><tr><td>Цена с доставкой: </td> <td style='padding-left: 10px; padding-right: 10px' class='cost'> "+(product.retail_price*toRubles+product.delivery_msk*getDollarRate()).toFixed(0).toLocaleUpperCase()+"</td><td> RUB</td></tr></table></p>"
-                +"<p>Поставщик: "+supplier.name+"</p>"
-            +"</div>"
-            +"<div class='grid-20'>"
-                +"<button id='button#"+product.id+"' type='button' class='primary' onclick='addProductToCart(this.id)'>Купить</button>"
-            +"</div>"
-        +"</div>";
-
-    return htmlString;
-}
-
-function getHtmlShoppingCart(purchases) {
-    var toRubles = getDollarRate()*getAmazonPercent();
-    var htmlString = "";
-    if (purchases == null || purchases.length == 0) {
-        printFlashMessage("Ваша корзина пуста.", "info");
-    } else {
-        htmlString =
-            "<div id='checkPurchases' class='grid-100 lightgray-box'>"
-                +"<div class='grid-100'>"
-                    +"<h2>Ваша корзина:</h2>"
-                +"</div>"
-
-                +getPurchaseString(purchases)
-
-                +"<div class='prefix-85 grid-15'>"
-                    +"<h2>Итого: "+(getTotal(purchases)*toRubles).toFixed(0).toLocaleUpperCase()+"</h2>"
-                +"</div>"
-                +"<div class='prefix-85 grid-15'>"
-                    +"<button class='modern' type='button' onclick='checkOut()'>Оплатить</button>"
-                +"</div>"
-            +"</div>";
-    }
-    return htmlString;
-}
-
-function getPurchaseString (purchases) {
-    var toRubles = getDollarRate()*getAmazonPercent();
-    var string = "";
-    for (var i=0;i<purchases.length;i++) {
-        string +=
-            "<div class='grid-100'>"
-                +"<table>"
-                    +"<tr>"
-                        +"<td style='vertical-align: middle'>"
-                            +"<div class='grid-100'>"
-                                +getThumbnail(purchases[i].product, false)
-                            +"</div>"
-                        +"</td>"
-                        +"<td style='vertical-align: middle'>"
-                            +"<div class='grid-100'>"
-                                +"<p>"
-                                    +"<h3>"+purchases[i].product.name+"</h3>";
-
-                                    var description = getDescription(purchases[i].product.description);
-                                    string = string + "<h5><ul>"
-                                    for (var j=0;j<description.length;j++) {
-                                        string = string + "<li>" + description[j] + "</li>";
-                                    }
-                                    string = string + "</ul></h5>";
-
-                                string = string + "</p>"
-                            +"</div>"
-                        +"</td>"
-                        +"<td style='vertical-align: middle'>"
-                            +"<div class='grid-10'>"
-                                +"<h4>"+(purchases[i].product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+" RUB</h4>"
-                            +"</div>"
-                        +"</td>"
-                        +"<td style='vertical-align: middle'>"
-                            +"<div class='grid-10'>"
-                                +"<style>"
-                                    +"input[type=number]::-webkit-inner-spin-button {"
-                                    +"opacity: 1"
-                                    +"}"
-                                +"</style>"
-                                +"<input id='quantity#"+i+"' type='number' value='"+purchases[i].quantity+"' min='0' max='999' class='simple-input center' onchange='updateCart(this.id)'/>"
-                            +"</div>"
-                        +"</td>"
-                        +"<td style='vertical-align: middle'>"
-                            +"<div class='grid-10'>"
-                                +"<h3>"+(purchases[i].quantity*purchases[i].product.retail_price*toRubles).toFixed(0).toLocaleUpperCase()+" RUB</h3>"
-                            +"</div>"
-                        +"</td>"
-                    +"</tr>"
-                +"</table>"
-            +"</div>";
-    }
-    return string;
-}
-
-function checkShoppingCart() {
-    var root = $("#root");
-    $.ajax({
-        url: "/purchases",
-        type: "GET",
-        dataType: "json",
-        contentType: "application/json",
-        headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
-        success: function (purchases) {
-            root.children().remove();
-            root.append(getHtmlShoppingCart(purchases));
-        },
-        error: getErrorMsg
-    });
-}
-
 function showAStore () {
     var aStore = "<iframe src='http://astore.amazon.com/zzheads-20' width='90%' height='4000' frameborder='0' scrolling='no'></iframe>";
     var root = $("#root");
@@ -267,14 +147,13 @@ function showAStore () {
     root.append(aStore);
 }
 
-function showAbout () {
-    var about = "Все товары поставляются из США, основные поставщики - amazon.com, apple.com. Срок поставки зависит от конкретного товара, в среднем составляет не более 2-х недель с момента оплаты. Цены указаны в долларах США. Гарантия на комплектующие - от года до трех лет? на телефоны iPhone - 1 год, с момента поставки товара."
-    +"Указанная стоимость товара включает в себя все расходы по транспортировке, растамаживанию и пр.";
-    printFlashMessage(about, "info");
+function deletePurchaseCard (indexId) {
+    var index = getIdFromElementId(indexId);
+    var card = document.getElementById('purchaseCard #'+index);
+    card.remove();
 }
 
 function updateCart (inputId) {
-    var root = $("#root");
     var index = getIdFromElementId(inputId);
     var updatedQuantity = document.getElementById(inputId).value;
     var data = {
@@ -290,12 +169,21 @@ function updateCart (inputId) {
         headers: {"X-CSRF-Token": $("meta[name='_csrf']").attr("content")},
         data: JSON.stringify(data, null, "\t"),
         success: function (purchases) {
-            root.children().remove();
-            root.append(getHtmlShoppingCart(purchases));
-            document.getElementById("shoppingCart").innerText = (getTotal(purchases)*getAmazonPercent()*getDollarRate()).toFixed(0).toLocaleUpperCase()+" RUB";
+            if (updatedQuantity == 0) {
+                console.log("Удалим "+index+"карточку продукта");
+                deletePurchaseCard(index);
+            }
+            updateShoppingCart(getTotal(purchases)*dollar_rate*amazon_percent);
         },
         error: getErrorMsg
     });
+}
+
+function deleteProductFromCart (indexId) {
+    var index = getIdFromElementId(indexId);
+    var inputId = 'quantityItems #'+index;
+    document.getElementById(inputId).value = 0;
+    updateCart(inputId);
 }
 
 function getSelectedCategory (categoryId) {

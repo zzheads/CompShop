@@ -90,10 +90,9 @@
                     <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}"></option>
                 </select>
             </div>
-            <div class="col s2 offset-s4 valign" id="shoppingCart">
-                <a class="waves-effect waves-teal btn-flat no-margin white-text right" th:inline="text"><i class="material-icons right">shopping_cart</i>[[@{${total}+' руб'}]]</a>
+            <div class="col s5 offset-s3 valign" id="shoppingCart" onclick="location='/shoppingcart;'">
+                <a class="waves-effect waves-teal btn-flat no-margin white-text right" th:inline="text"><i class="material-icons right">shopping_cart</i>[[@{${#numbers.formatDecimal(total,1,'COMMA',0,'POINT')}+' руб'}]]</a>
             </div>
-
         </div>
     </div>
 </div>
@@ -129,7 +128,7 @@
     </div>
     <div class="card-stacked">
         <div class="card-content">
-            <span th:text="@{${#numbers.formatDecimal(product.retailPrice*dollar_rate*amazon_percent,3,'COMMA',0,'POINT')}+' '}" class="new badge blue-grey" data-badge-caption="руб">4</span>
+            <span th:text="@{${#numbers.formatDecimal(product.retailPrice*dollar_rate*amazon_percent,1,'POINT',0,'COMMA')}+' '}" class="new badge blue-grey" data-badge-caption="руб">4</span>
             <br/><br/>
             <h6 th:text="${product.name}" class="valign"></h6>
         </div>
@@ -140,35 +139,63 @@
 </div>
 
 <div th:fragment="product-detail-row" class="row">
-    <div class="row col s9 offset-s1 white z-depth-3">
+    <div class="row col s10 offset-s1 white z-depth-3">
         <h5 class="card-title black-text bold" th:text="${product.name}"></h5>
-        <div class="col s6">
-            <img th:src="${product.largeImage}" class="materialboxed" width="60%"/>
+        <div class="divider"></div>
+        <br/>
+        <div class="col s4 offset-s1 valign-wrapper">
+            <img th:src="${product.largeImage}" class="materialboxed valign" width="100%"/>
         </div>
-        <div class="col s6">
-            <ul>
-                <li>
-                    <blockquote th:text="${product.description}"></blockquote>
-                </li>
-                <li th:text="@{'Размеры: '+${product.length}+'x'+${product.width}+'x'+${product.height}+' '+${product.unitsL}}"></li>
-                <li th:text="@{'Вес: '+${product.weight}+' '+${product.unitsW}}"></li>
-                <li th:text="@{'Категория: '+${product.category.name}}">
-                    Производитель: GeForce
-                </li>
-                <li th:text="@{'Продавец: '+${product.supplier.name}}">
-                    Продавец: amazon.com
-                </li>
-                <li>
-                    <h6 class="right-align">Цена: <span class="red-text text-accent-3" th:text="@{${#numbers.formatDecimal(product.retailPrice*dollar_rate*amazon_percent,3,'COMMA',0,'POINT')}+' '}">42,546</span> руб</h6>
-                    <h6 class="right-align">Цена с доставкой: <span class="red-text text-accent-4" th:text="@{${#numbers.formatDecimal((product.retailPrice+product.delivery)*dollar_rate*amazon_percent,3,'COMMA',0,'POINT')}+' '}">43,799</span> руб</h6>
-                </li>
-                <li class="collection-item">
-                    <br/>
-                </li>
-                <li class="collection-item right-align">
-                    <a th:id="@{'buyButton #'+${product.id}}" href="#" class="btn-flat orange darken-3 white-text" onclick="addProductToCart(this.id)">Купить</a>
-                </li>
-            </ul>
+        <div class="col s5 offset-s1">
+            <div class="row">
+                <div class="chip teal lighten-3 left" th:text="@{'asin: '+${product.asin}}"></div>
+            </div>
+            <div class="row no-margin">
+                <blockquote th:text="${product.description}"></blockquote>
+            </div>
+            <div class="row no-margin">
+                <div class="chip" th:text="@{'Размеры: '+${product.length}+'x'+${product.width}+'x'+${product.height}+' '+${product.unitsL}}"></div>
+            </div>
+            <div class="row no-margin">
+                <div class="chip" th:text="@{'Вес: '+${product.weight}+' '+${product.unitsW}}"></div>
+            </div>
+            <div class="row no-margin">
+                <div class="chip" th:text="@{'Категория: '+${product.category.name}}"></div>
+            </div>
+            <div class="row no-margin">
+                <div class="chip" th:text="@{'Продавец: '+${product.supplier.name}}"></div>
+            </div>
+            <div class="row no-margin">
+                <div class="right">
+                    <span>Цена: </span>
+                    <span class="red-text bold" th:text="@{${#numbers.formatDecimal(product.retailPrice*dollar_rate*amazon_percent,1,'POINT',0,'COMMA')}+' '}"></span>
+                    <span>руб</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="right">
+                    <span>Цена с доставкой: </span>
+                    <span class="red-text" th:text="@{${#numbers.formatDecimal(product.retailPrice*dollar_rate*amazon_percent + product.delivery*dollar_rate,1,'POINT',0,'COMMA')}+' '}"></span>
+                    <span>руб</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="divider"></div>
+            </div>
+
+            <div th:if="${purchase == null}" class="row"> <!-- Просмотр информации о продукте -->
+                <a th:id="@{'buyButton #'+${product.id}}" href="#" class="btn-flat orange darken-3 white-text right" onclick="addProductToCart(this.id)">Купить</a>
+            </div>
+
+            <div th:if="${purchase != null}" class="row"> <!-- Проверяем корзину-->
+                <div class="input-field col s2">
+                    <input th:value="${purchase.quantity}" th:id="@{'quantityItems #'+${stat.index}}" type="text" class="validate" oninput="updateCart(this.id)"/>
+                    <label class="active" th:for="@{'quantityItems #'+${stat.index}}">Количество</label>
+                </div>
+                <div class="col s4">
+                    <a th:id="@{'deleteButton #'+${stat.index}}" href="#" class="btn-flat orange darken-3 white-text right" onclick="deleteProductFromCart(this.id)">Удалить</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -191,7 +218,7 @@
             <h6 th:text="@{${product.weight}+' '+${product.unitsW}}" class="description no-margin"></h6>
         </div>
         <div class="card-action">
-            <span class="red-text text-accent-4 left" th:text="@{'$'+${#numbers.formatDecimal(product.purchasePrice,3,'COMMA',0,'POINT')}}"></span>
+            <span class="red-text text-accent-4 left" th:text="@{'$'+${#numbers.formatDecimal(product.purchasePrice,1,'POINT',0,'COMMA')}}"></span>
             <a th:id="${product.id}" href="#" class="btn-flat red darken-3 white-text right" onclick="deleteProduct(this.id)">Удалить</a>
         </div>
     </div>

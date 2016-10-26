@@ -9,12 +9,9 @@
 <div th:replace="layout::flash"></div>
 
 <div class="container">
-    <br/>
-    <div id="productsList" class="row col s12">
-        <div th:each="product : ${products}" th:id="@{'productCard #'+${product.id}}" class="col s6 no-margin">
-            <a th:href="@{'/details/'+${product.id}}">
-                <div th:replace="layout :: product-row"></div>
-            </a>
+    <div th:id="@{'purchaseCard #'+${stat.index}}" th:each="purchase, stat : ${purchases}">
+        <div th:each="product : ${purchase.product}">
+            <div th:replace="layout::product-detail-row"></div>
         </div>
     </div>
 </div>

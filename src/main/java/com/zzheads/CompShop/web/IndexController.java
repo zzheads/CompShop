@@ -159,6 +159,13 @@ public class IndexController {
         return "detail";
     }
 
+    @RequestMapping(path = "/shoppingcart", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String shoppingCart (Model model) {
+        model.addAttribute("purchases", shoppingCart.getPurchases());
+        return "shopcart";
+    }
+
     @RequestMapping(path = "/admin", method = RequestMethod.GET)
     public String admin (Model model) {
         Arrays.sort(INDEXES_SEARCH);
