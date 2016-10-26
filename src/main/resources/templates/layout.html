@@ -51,58 +51,15 @@
 </nav>
 
 <nav th:fragment="nav-admin-row" class="light-blue darken-3" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-admin-container" href="/" class="brand-logo bold">ZDelivery</a>
+    <div class="nav-wrapper container">
+        <a id="logo-admin-container" href="/" class="brand-logo bold">ZDelivery</a>
         <ul class="right hide-on-med-and-down">
-            <li><input id="keywords" type="text" placeholder="Keywords" class="input-field white-text"/></li>
-            <li><select id="indexSearch" class="input-field browser-default light-blue darken-2 white-text">
-                <option>Wireless</option>
-                <option selected="selected">PCHardware</option>
-                <option>All</option>
-                <option>UnboxVideo</option>
-                <option>Appliances</option>
-                <option>ArtsAndCrafts</option>
-                <option>Automotive</option>
-                <option>Baby</option>
-                <option>Beauty</option>
-                <option>Books</option>
-                <option>Music</option>
-                <option>Fashion</option>
-                <option>FashionBaby</option>
-                <option>FashionBoys</option>
-                <option>FashionGirls</option>
-                <option>FashionMen</option>
-                <option>FashionWomen</option>
-                <option>Collectibles</option>
-                <option>MP3Downloads</option>
-                <option>Electronics</option>
-                <option>GiftCards</option>
-                <option>Grocery</option>
-                <option>HealthPersonalCare</option>
-                <option>HomeGarden</option>
-                <option>Industrial</option>
-                <option>KindleStore</option>
-                <option>Luggage</option>
-                <option>Magazines</option>
-                <option>Movies</option>
-                <option>MusicalInstruments</option>
-                <option>OfficeProducts</option>
-                <option>LawnAndGarden</option>
-                <option>PetSupplies</option>
-                <option>Pantry</option>
-                <option>Software</option>
-                <option>SportingGoods</option>
-                <option>Tools</option>
-                <option>Toys</option>
-                <option>VideoGames</option>
-                <option>Wine</option>
-                <option>Blended</option>
-            </select>
-            </li>
-            <li><a href="#" onclick="getFromAmazon()">itemSearch</a></li>
-            <li><a href="#" onclick="getImages()">updateImages</a></li>
-            <li><a href="#" onclick="getPrices()">updatePrices</a></li>
-            <li><a href="#" onclick="applyToBase()">save</a></li>
+            <li><a href="#" onclick="getFromAmazon()">Search</a></li>
+            <li><a href="#" onclick="getImages()">addImages</a></li>
+            <li><a href="#" onclick="getPrices()">addPrices</a></li>
+            <li><a href="#" onclick="applyToBase()">Save</a></li>
         </ul>
+
         <ul id="nav-admin-mobile" class="side-nav">
             <li><a href="#" onclick="showAStore()">amazon</a></li>
         </ul>
@@ -141,25 +98,42 @@
     </div>
 </div>
 
-<div th:fragment="header-admin-row" class="row orange darken-2">
-    <div class="col s2 offset-s10">
-        <a href="" class="btn-flat white-text">
-            <span id="countProducts" th:inline="text">[[${count}]]</span>
-        </a>
+<div th:fragment="header-admin-row" class="row col s12 headercolor">
+    <div class="container">
+        <div class="valign-wrapper">
+
+            <div class="col s2 offset-s6 valign">
+                <input id="keywords" type="text" placeholder="Keywords" class="input-field white-text no-margin"/>
+            </div>
+
+            <div class="col s2 valign">
+                <select id="indexSearch" class="input-field headercolor white-text no-margin">
+                    <option selected="selected">PCHardware</option>
+                    <option th:each="index : ${indexes}" th:value="${index}" th:text="${index}">Wireless</option>
+                </select>
+            </div>
+
+            <div class="col s1 offset s1 right valign">
+                <a href="" class="btn-flat white-text">
+                    <span id="countProducts" th:inline="text">[[${count}]]</span>
+                </a>
+            </div>
+
+        </div>
     </div>
 </div>
 
-<div th:fragment="product-row" class="card horizontal">
+<div th:fragment="product-row" class="card small horizontal">
     <div class="card-image">
         <div th:style="'float: left; width: 150px; height: 150px; overflow: hidden; background: url('+${product.mediumImage}+') center center no-repeat; margin: 20px;'"></div>
     </div>
     <div class="card-stacked">
         <div class="card-content">
-            <h6 th:inline="text">[[${product.name}]]</h6>
+            <span th:text="@{${#numbers.formatDecimal(product.retailPrice*dollar_rate*amazon_percent,3,'COMMA',0,'POINT')}+' '}" class="new badge blue-grey" data-badge-caption="руб">4</span>
+            <br/><br/>
+            <h6 th:text="${product.name}" class="valign"></h6>
         </div>
         <div class="card-action">
-            <span class="red-text text-accent-4 left" th:text="@{${#numbers.formatDecimal(product.retailPrice*dollar_rate*amazon_percent,3,'COMMA',0,'POINT')}+' '}"> </span>
-            <span class="left" th:inline="text">. руб</span>
             <a th:id="@{'buyButton #'+${product.id}}" href="#" class="btn-flat orange darken-3 white-text right" onclick="addProductToCart(this.id)">Купить</a>
         </div>
     </div>
@@ -199,16 +173,22 @@
     </div>
 </div>
 
-<div th:fragment="product-row-admin" class="card horizontal">
+<div th:fragment="product-row-admin" class="card small horizontal">
     <div class="card-image">
         <div th:style="'float: left; width: 150px; height: 150px; overflow: hidden; background: url('+${product.mediumImage}+') center center no-repeat; margin: 20px;'"></div>
     </div>
     <div class="card-stacked">
         <div class="card-content">
-            <h6 th:inline="text">[[${product.name}]]</h6>
-            <h6 th:inline="text" class="fontsmall grey-text">[[${product.description}]]</h6>
-            <h6 th:text="@{${product.height}+'x'+${product.length}+'x'+${product.width}+' '+${product.unitsL}}"></h6>
-            <h6 th:text="@{${product.weight}+' '+${product.unitsW}}"></h6>
+            <span class="new badge grey" data-badge-caption="id: " th:text="${product.id}"></span>
+            <br/>
+            <span class="new badge" data-badge-caption="asin: " th:text="${product.asin}"></span>
+            <br/>
+            <h6 th:text="${#strings.length(product.name)>80} ? @{${#strings.substring(product.name,0,79)}+'...'} : ${product.name}" class="bold">[[${product.name}]]</h6>
+
+            <h6 th:text="${#strings.length(product.description)>150} ? @{${#strings.substring(product.description,0,149)}+'...'} : ${product.description}" class="description"></h6>
+
+            <h6 th:text="@{${product.height}+'x'+${product.length}+'x'+${product.width}+' '+${product.unitsL}}" class="description no-margin"></h6>
+            <h6 th:text="@{${product.weight}+' '+${product.unitsW}}" class="description no-margin"></h6>
         </div>
         <div class="card-action">
             <span class="red-text text-accent-4 left" th:text="@{'$'+${#numbers.formatDecimal(product.purchasePrice,3,'COMMA',0,'POINT')}}"></span>
@@ -271,11 +251,6 @@
     <script src="../assets/scripts/jquery-1.12.4.min.js"></script>
     <script src="../assets/scripts/materialize.js"></script>
     <script src="../assets/scripts/init.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('select').material_select();
-        });
-    </script>
 </div>
 
 </body>

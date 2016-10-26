@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head th:replace="layout::head-row"></head>
-<body>
+<body class="blue-grey lighten-5">
 <sec:authorize access="hasAnyRole('ADMIN', 'DEVELOPER')">
 
     <div th:replace="layout::user-row"></div>
@@ -11,7 +11,7 @@
 
     <div class="container">
         <br/>
-        <div id="productsList" class="row col row s12">
+        <div id="productsList" class="row col s12">
             <div th:each="product : ${products}" th:id="@{'productCard #'+${product.id}}" class="col s6 no-margin">
                 <div th:replace="layout :: product-row-admin"></div>
             </div>
@@ -22,8 +22,11 @@
     <script src="../assets/scripts/formatDecimal.js" type="text/javascript" charset="utf-8"></script>
     <script src="../assets/scripts/flashMessage.js" type="text/javascript" charset="utf-8"></script>
     <script src="../assets/scripts/admin.js" type="text/javascript" charset="utf-8"></script>
-    <script src="../assets/scripts/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
-
+    <script>
+        $(document).ready(function() {
+            $('select').material_select();
+        });
+    </script>
 </sec:authorize>
 </body>
 </html>

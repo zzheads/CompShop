@@ -30,8 +30,8 @@
 }
 
 .flash {
-    margin-top: 0.2rem;
-    margin-bottom: 0.2rem;
+    margin-top: 0.1rem;
+    margin-bottom: 0.1rem;
     padding: 0.1rem;
     border-radius: 4px;
     font-size: 0.9rem;
@@ -57,6 +57,7 @@
     color: #f3f6ee;
 }
 
+
 .navcolor {
     background: #558C89;
 }
@@ -72,8 +73,8 @@
 .buttoncolor {
     background: #D9853B;
 }
-.myselect {
-    padding: 0;
-    margin: 0;
-    font-size: 0.9rem;
+.description {
+    font-family: "Arial Narrow", serif;
+    font-size: small;
+    color: dimgrey;
 }

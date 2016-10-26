@@ -10,8 +10,8 @@
 
 <div class="container">
     <br/>
-    <div id="productsList" class="row col row s12">
-        <div th:each="product : ${products}" th:id="@{'productCard #'+${product.id}}" class="col s6 no-margin">
+    <div id="productsList" class="row col s12">
+        <div th:each="product : ${products}" th:id="@{'productCard #'+${product.id}}" class="col s4 no-margin">
             <a th:href="@{'/details/'+${product.id}}">
                 <div th:replace="layout :: product-row"></div>
             </a>
@@ -25,5 +25,6 @@
 <script src="../assets/scripts/formatDecimal.js"></script>
 <script src="../assets/scripts/flashMessage.js"></script>
 <script src="../assets/scripts/index.js"></script>
+<script>$(document).ready(function() {$('select').material_select();});</script>
 </body>
 </html>

@@ -57,7 +57,7 @@ public class AwsServiceImpl implements AwsService {
                                 product.setName(node.getTextContent());
                                 break;
                             case "Feature":
-                                featureString += node.getTextContent() + "%n ";
+                                featureString += node.getTextContent() + System.lineSeparator();
                                 break;
                             case "ItemDimensions" : case "PackageDimensions":
                                 for (int c = 0; c < node.getChildNodes().getLength(); c++) {

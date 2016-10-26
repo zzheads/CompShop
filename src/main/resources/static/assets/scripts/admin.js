@@ -137,6 +137,7 @@ function getImages() {
         success: function (products) {
             updateImages(products);
             updateProducts(productsFromAmazon);
+            printFlashMessage("Фото всех"+products.length+" продуктов обновлены", "success");
         },
         error: getErrorMsg
     });
@@ -154,6 +155,7 @@ function getPrices() {
         success: function (products) {
             updatePrices(products);
             updateProducts(productsFromAmazon);
+            printFlashMessage("Цена всех"+products.length+" продуктов обновлена", "success");
         },
         error: getErrorMsg
     });

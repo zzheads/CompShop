@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -40,6 +41,11 @@ public class IndexController {
     private final CityService cityService;
     private final SortingOrder sortingOrder;
     private final ShoppingCartService shoppingCartService;
+    
+    private static final String[] INDEXES_SEARCH = {"Wireless", "PCHardware", "All", "UnboxVideo", "Appliances", "ArtsAndCrafts", "Automotive", "Baby", "Beauty", "Books", "Music", "Fashion",
+            "FashionBaby", "FashionBoys", "FashionGirls", "FashionMen", "FashionWomen", "Collectibles", "MP3Downloads", "Electronics", "GiftCards", "Grocery", "HealthPersonalCare",
+            "HomeGarden", "Industrial", "KindleStore", "Luggage", "Magazines", "Movies", "MusicalInstruments", "OfficeProducts", "LawnAndGarden", "PetSupplies", "Pantry",
+            "Software", "SportingGoods", "Tools", "Toys", "VideoGames", "Wine", "Blended"};
 
     @Autowired
     public IndexController(
@@ -155,7 +161,9 @@ public class IndexController {
 
     @RequestMapping(path = "/admin", method = RequestMethod.GET)
     public String admin (Model model) {
+        Arrays.sort(INDEXES_SEARCH);
         model.addAttribute("count", productService.count());
+        model.addAttribute("indexes", INDEXES_SEARCH);
         return "admin";
     }
 
