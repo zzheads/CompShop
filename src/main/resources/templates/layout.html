@@ -27,7 +27,7 @@
             </a>
             <span>
                     <a sec:authorize="isAuthenticated()" th:href="@{/profile}" th:text="${loggedUsername}">Chris Ramazzotti</a>
-                    <a sec:authorize="isAnonymous()" th:href="@{/signup}">зарегистрироваться</a>
+                    <a sec:authorize="isAnonymous()" th:href="@{/register}">зарегистрироваться</a>
                 </span>
             &bullet;
             <span>

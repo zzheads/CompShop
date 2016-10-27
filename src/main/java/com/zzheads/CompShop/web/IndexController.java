@@ -1,6 +1,8 @@
 package com.zzheads.CompShop.web;
 
+import com.google.gson.Gson;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.zzheads.CompShop.dto.UserDto;
 import com.zzheads.CompShop.model.*;
 import com.zzheads.CompShop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,8 +26,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static jdk.nashorn.internal.objects.Global.NaN;
-
 @Controller
 @Scope ("request")
 public class IndexController {
@@ -41,6 +40,7 @@ public class IndexController {
     private final CityService cityService;
     private final SortingOrder sortingOrder;
     private final ShoppingCartService shoppingCartService;
+    private final UserService userService;
     
     private static final String[] INDEXES_SEARCH = {"Wireless", "PCHardware", "All", "UnboxVideo", "Appliances", "ArtsAndCrafts", "Automotive", "Baby", "Beauty", "Books", "Music", "Fashion",
             "FashionBaby", "FashionBoys", "FashionGirls", "FashionMen", "FashionWomen", "Collectibles", "MP3Downloads", "Electronics", "GiftCards", "Grocery", "HealthPersonalCare",
@@ -59,7 +59,8 @@ public class IndexController {
             CityService cityService,
             ProductService productService,
             SortingOrder sortingOrder,
-            ShoppingCartService shoppingCartService)
+            ShoppingCartService shoppingCartService,
+            UserService userService)
     {
         this.currencyService = currencyService;
         this.addressService = addressService;
@@ -72,6 +73,7 @@ public class IndexController {
         this.productService = productService;
         this.sortingOrder = sortingOrder;
         this.shoppingCartService = shoppingCartService;
+        this.userService = userService;
     }
 
     private void initShoppingCart() throws Exception {
@@ -166,6 +168,43 @@ public class IndexController {
         return "shopcart";
     }
 
+    @RequestMapping(path = "/address", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String getAddress (Model model) {
+        String[] countries = {"Россия", "Белоруссия", "Казахстан"};
+        String[] cities = {"Волгоград", "Москва", "Минск"};
+
+        model.addAttribute("countries", countries);
+        model.addAttribute("cities", cities);
+        return "address";
+    }
+
+    @RequestMapping(path = "/address", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody public String postAddress (@RequestBody String jsonAddress) {
+        Gson gson = new Gson();
+        return gson.toJson("success");
+    }
+
+    @RequestMapping(path = "/register", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String signUp (Model model) {
+        String[] registeredUsernames = {"zhaba@gmail.com", "zhaba@hotmail.com"};
+        model.addAttribute("registeredUsernames", registeredUsernames);
+        return "register";
+    }
+
+    @RequestMapping(path = "/register", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody public String registerNewUser (@RequestBody String jsonUser) {
+        Gson gson = new Gson();
+        UserDto userDto = gson.fromJson(jsonUser, UserDto.class);
+        User user = new User(userDto.getUsername(), userDto.getPassword(), false, new Role("ROLE"));
+        userService.save(user);
+
+        return gson.toJson("success");
+    }
+
     @RequestMapping(path = "/admin", method = RequestMethod.GET)
     public String admin (Model model) {
         Arrays.sort(INDEXES_SEARCH);
@@ -176,14 +215,7 @@ public class IndexController {
 
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String loginForm(Model model, HttpServletRequest request) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return "USER";
-            }
-        });
-        model.addAttribute("user", new User("user", "password", authorities));
+        model.addAttribute("user", new User("user", "password", true, new Role("USER")));
         try {
             Object flash = request.getSession().getAttribute("flash");
             model.addAttribute("flash", flash);
@@ -203,7 +235,4 @@ public class IndexController {
         }
         return "redirect:/login"; //You can redirect wherever you want, but generally it's a good practice to show login screen again.
     }
-
-    
-
 }

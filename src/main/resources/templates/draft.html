@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
-      xmlns="http://www.w3.org/1999/html">
+      xmlns="http://www.w3.org/1999/html" xmlns:overflow="http://www.w3.org/1999/xhtml"
+      xmlns:background="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
@@ -81,32 +82,35 @@
 </div>
 
 <div class="container">
-    <div class="row">
+    <div class="row col s12">
         <div class="row col s8 offset-s2 white z-depth-3">
-            <br/>
-            <div class="row">
-                <div class="input-field col s5">
-                    <input id="firstName" type="text" class="validate"/>
-                    <label for="firstName">Имя</label>
+
+                <div class="row center teal-text text-darken-2">
+                    <h5>Регистрация нового пользователя:</h5>
                 </div>
-                <div class="input-field col s5 offset-s1">
-                    <input id="lastName" type="text" class="validate"/>
-                    <label for="lastName">Фамилия</label>
+                <div class="row">
+                    <div class="input-field col s6 offset-s3">
+                        <input id="email" type="email" class="validate"/>
+                        <label for="email">Ваш адрес электронной почты</label>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s7">
-                    <input id="cardNumber"/>
-                    <label for="cardNumber">Номер карты</label>
+                <div class="row">
+                    <div class="input-field col s6 offset-s3">
+                        <input id="password1" type="password" class="validate"/>
+                        <label for="password1">Пароль</label>
+                    </div>
                 </div>
-                <div class="input-field col s2">
-                    <input id="monthExp"/>
-                    <label for="monthExp">Месяц</label>
+                <div class="row">
+                    <div class="input-field col s6 offset-s3">
+                        <input id="password2" type="password" class="validate"/>
+                        <label for="password2">Пароль (повтор)</label>
+                    </div>
                 </div>
-                <div class="input-field col s2">
-                    <input id="yearExp"/>
-                    <label for="yearExp">Год</label>
+                <div class="row center">
+                    <a class="waves-effect waves-light btn"><i class="material-icons right">send</i>Зарегистрировать</a>
+                    <br/>
                 </div>
+
             </div>
         </div>
     </div>

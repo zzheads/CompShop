@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head-row"></head>
+<body class="blue-grey lighten-5">
+
+<div th:replace="layout :: user-row"></div>
+<nav th:replace="layout :: nav-row"></nav>
+<div th:replace="layout :: header-row"></div>
+<div th:replace="layout::flash"></div>
+
+<meta th:each="registeredUsername, stat : ${registeredUsernames}" th:name="@{'registeredUsername #'+${stat.index}}" th:content="${registeredUsername}"/>
+
+<div class="container">
+    <div class="row col s12">
+        <div class="row col s8 offset-s2 white z-depth-3">
+
+            <div class="row center teal-text text-darken-2">
+                <h5>Регистрация нового пользователя:</h5>
+            </div>
+            <div class="row">
+                <div class="input-field col s6 offset-s3">
+                    <input id="email" type="email" class="validate" name="email"/>
+                    <label for="email">Ваш адрес электронной почты</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6 offset-s3">
+                    <input id="password1" type="password" class="validate" name="password1"/>
+                    <label for="password1">Пароль</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6 offset-s3">
+                    <input id="password2" type="password" class="validate" name="password2"/>
+                    <label for="password2">Пароль (повтор)</label>
+                </div>
+            </div>
+            <div class="row center">
+                <a class="waves-effect waves-light btn" onclick="registerNewUser()"><i class="material-icons right">send</i>Зарегистрировать</a>
+                <br/>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<footer th:replace="layout :: footer-row"></footer>
+
+<div th:replace="layout :: scripts"></div>
+<script src="../assets/scripts/flashMessage.js"></script>
+<script src="../assets/scripts/register.js"></script>
+<script>$(document).ready(function() {$('select').material_select();});</script>
+</body>
+</html>

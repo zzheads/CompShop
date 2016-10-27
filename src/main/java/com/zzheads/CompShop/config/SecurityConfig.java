@@ -1,5 +1,6 @@
 package com.zzheads.CompShop.config;
 
+import com.zzheads.CompShop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableWebSecurity
 @EnableGlobalAuthentication
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private UserService userService;
+
     @SuppressWarnings("SpringJavaAutowiringInspection")
 
     @Autowired
@@ -30,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication()
                 .withUser("admin").password("admin").roles("ADMIN", "USER").and()
                 .withUser("user").password("password").roles("USER");
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -39,7 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-
         web.ignoring().antMatchers("/assets/**", "/**/*.css", "/**/*.png", "/**/*.gif", "/**/*.jpg", "/**/*.js","/**/*.map");
     }
 
@@ -47,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/signup/**").permitAll()
+                .antMatchers("/register/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
