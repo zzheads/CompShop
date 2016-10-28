@@ -16,7 +16,7 @@ public class Application {
     public static final Double PROFIT_PERCENT = 1.1;
 
     public static void main(String[] args) {
-        File file = new File("awscreds.txt");
+        File file = new File("../static/assets/c.txt");
         try(FileReader reader = new FileReader(file)) {
             int lengthAccessKey = 20;
             char[] buffer = new char[(int)file.length()];
