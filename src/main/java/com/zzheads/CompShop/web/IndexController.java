@@ -5,6 +5,8 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.zzheads.CompShop.dto.UserDto;
 import com.zzheads.CompShop.model.*;
 import com.zzheads.CompShop.service.*;
+import com.zzheads.CompShop.utils.FlashMessage;
+import com.zzheads.CompShop.web.api.MailApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -204,18 +207,36 @@ public class IndexController {
     @ResponseBody public String registerNewUser (@RequestBody String jsonUser) {
         Gson gson = new Gson();
         UserDto userDto = gson.fromJson(jsonUser, UserDto.class);
-        Role userRole = roleService.findByName("ROLE");
+        Role userRole = roleService.findByName("USER");
         if (userRole == null) {
             userRole = new Role("USER");
             roleService.save(userRole);
         }
-        User user = new User(userDto.getUsername(), passwordEncoder.encode(userDto.getPassword()), false, userRole);
+        User user = new User(userDto.getUsername().toLowerCase(), passwordEncoder.encode(userDto.getPassword()), false, userRole);
         userService.save(user);
 
         // сформировать ссылку
         String confirm = passwordEncoder.encode(user.getId().toString()+user.getUsername()+user.getPassword());
         // отослать письмо с ссылкой
+        final String HOST_NAME = "http://localhost:8080";
+        String body = "Для активации вашего аккаунта на сайте zdelivery.ru перейдите по ссылке ниже: \n"+
+                HOST_NAME+"/confirm?confirmString="+confirm;
+        MailApi.sendMail("zzheads@gmail.com", "www.zdelivery.ru", body, "Пожалуйста подтвердите ваш аккаунт на сайте zdelivery.ru");
         return gson.toJson("success");
+    }
+
+    @RequestMapping(path = "/profile/{id}", method = RequestMethod.GET)
+    public String profileById (@PathVariable Long id, Model model) {
+        User user = userService.findById(id);
+        model.addAttribute("user", user);
+        return "profile";
+    }
+
+    @RequestMapping(path = "/profile", method = RequestMethod.GET)
+    public String profile (Model model) {
+        User user = userService.findByName(getLoggedUser());
+        model.addAttribute("user", user);
+        return "profile";
     }
 
     @RequestMapping(path = "/admin", method = RequestMethod.GET)
@@ -232,10 +253,28 @@ public class IndexController {
         try {
             Object flash = request.getSession().getAttribute("flash");
             model.addAttribute("flash", flash);
-
             request.getSession().removeAttribute("flash");
         } catch (Exception ex) {
             // "flash" session attribute must not exist...do nothing and proceed normally
+        }
+        return "login";
+    }
+
+    @RequestMapping(path = "/confirm", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String confirmEmail (@RequestParam String confirmString, Model model) {
+        for (User user : userService.findAll()) {
+            if (passwordEncoder.matches(user.getId().toString()+user.getUsername()+user.getPassword(), confirmString)) {
+                user.setEnabled(true);
+                userService.save(user);
+                model.addAttribute("username", user.getUsername());
+                model.addAttribute("password", user.getPassword()); // хрень, все равно он уже зашифрован
+                model.addAttribute("flash", new FlashMessage("Адрес электронной почты "+user.getUsername()+" успешно подтвержден.", FlashMessage.Status.SUCCESS));
+                break;
+            }
+        }
+        if (!model.containsAttribute("flash")) {
+            model.addAttribute("flash", new FlashMessage("Ваша ссылка "+confirmString+" недействительна. Пользователь не найден.", FlashMessage.Status.FAILURE));
         }
         return "login";
     }

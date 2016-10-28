@@ -48,6 +48,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByName(String name) {
+        for (User user : findAll()) {
+            if (user.getUsername().equals(name))
+                return user;
+        }
+        return null;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // Load user from the database (throw exception if not found)
         User user = userDao.findByUsername(username);
