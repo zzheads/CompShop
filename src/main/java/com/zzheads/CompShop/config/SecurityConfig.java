@@ -1,6 +1,8 @@
 package com.zzheads.CompShop.config;
 
+import com.zzheads.CompShop.model.User;
 import com.zzheads.CompShop.service.UserService;
+import com.zzheads.CompShop.utils.FlashMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,7 +75,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private AuthenticationFailureHandler loginFailureHandler() {
-        return (request, response, exception) -> response.sendRedirect("/login");
+        return (request, response, exception) -> {
+            request.getSession().setAttribute("flash", new FlashMessage(exception.getMessage(), FlashMessage.Status.FAILURE));
+            response.sendRedirect("/login");
+        };
     }
 
     @Bean

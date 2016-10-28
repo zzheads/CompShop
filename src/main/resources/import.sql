@@ -6,3 +6,6 @@ INSERT INTO supplier (supplier_id, name, address_id) VALUES (2, 'apple.com', 1);
 
 INSERT INTO category (category_id, description, name) VALUES (1,'', 'PCHardware');
 INSERT INTO category (category_id, description, name) VALUES (2,'', 'Wireless');
+
+INSERT INTO role (id, name) VALUES (1, 'USER');
+INSERT INTO role (id, name) VALUES (2, 'ADMIN');

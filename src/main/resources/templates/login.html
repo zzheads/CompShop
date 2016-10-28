@@ -5,36 +5,43 @@
 <div th:replace="layout::user-row"></div>
 <nav th:replace="layout::nav-row"></nav>
 <div th:replace="layout::header-row"></div>
+<div th:replace="layout::flash"></div>
 
-
-    <div class="container">
-        <div class="row col s12 white">
-            <br/>
+<div class="container">
+    <div class="row col s12">
+        <div class="row col s8 offset-s2 white z-depth-3">
             <form action="/login" method="POST">
                 <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" hidden="hidden"/>
-                <div class="col s4 offset-s4 center">
-                    <label for="username">имя пользователя</label>
-                    <input type="text" name="username" id="username" placeholder="Username" class="validate"/>
+                <div class="row center teal-text text-darken-2">
+                    <h5>Вход для зарегистрированных пользователей:</h5>
                 </div>
-                <div class="col s4 offset-s4 center">
-                    <label for="password">пароль</label>
-                    <input type="password" name="password" id="password" placeholder="Password" class="validate"/>
+                <div class="row">
+                    <div class="input-field col s6 offset-s3">
+                        <input id="username" type="text" class="validate" name="username"/>
+                        <label for="username">Адрес электронной почты</label>
+                    </div>
                 </div>
-                <div class="col s4 offset-s4 center">
-                    <input type="checkbox" name="remember" id="remember"/>
-                    <label for="remember">запомнить меня</label>
+                <div class="row">
+                    <div class="input-field col s6 offset-s3">
+                        <input id="password" type="password" class="validate" name="password"/>
+                        <label for="password">Пароль</label>
+                    </div>
                 </div>
-
-                <div class="col s4 offset-s4 center">
-                    <br/><br/>
-                    <button class="btn waves-effect waves-light buttoncolor" type="submit" name="action" onclick="submitLogin()">Войти
-                        <i class="material-icons right">send</i>
-                    </button>
-                    <br/><br/>
+                <div class="row center no-margin">
+                    <div class="input-field col s6 offset-s3">
+                        <input type="checkbox" name="remember" id="remember"/>
+                        <label for="remember">Запомнить меня</label>
+                    </div>
                 </div>
-            </form>​
+                <div class="row center">
+                    <br/>
+                    <button type="submit" class="waves-effect waves-light btn"><i class="material-icons right">send</i>Войти</button>
+                    <br/>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
 <footer th:replace="layout::footer"></footer>
 <div th:replace="layout::scripts"></div>

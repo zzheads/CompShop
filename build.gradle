@@ -35,8 +35,9 @@ dependencies {
     compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.2.2'
     compile group: 'org.thymeleaf', name: 'thymeleaf-spring3', version: '3.0.1.RELEASE'
     compile group: 'commons-codec', name: 'commons-codec', version: '1.5'
-
     compile 'com.mashape.unirest:unirest-java:1.4.9'
+    compile group: 'javax.mail', name: 'mail', version: '1.4'
+
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile("org.dbunit:dbunit:2.5.1")

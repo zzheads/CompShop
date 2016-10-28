@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +40,8 @@ public class IndexController {
     private final SortingOrder sortingOrder;
     private final ShoppingCartService shoppingCartService;
     private final UserService userService;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
     
     private static final String[] INDEXES_SEARCH = {"Wireless", "PCHardware", "All", "UnboxVideo", "Appliances", "ArtsAndCrafts", "Automotive", "Baby", "Beauty", "Books", "Music", "Fashion",
             "FashionBaby", "FashionBoys", "FashionGirls", "FashionMen", "FashionWomen", "Collectibles", "MP3Downloads", "Electronics", "GiftCards", "Grocery", "HealthPersonalCare",
@@ -60,7 +61,9 @@ public class IndexController {
             ProductService productService,
             SortingOrder sortingOrder,
             ShoppingCartService shoppingCartService,
-            UserService userService)
+            UserService userService,
+            RoleService roleService,
+            PasswordEncoder passwordEncoder)
     {
         this.currencyService = currencyService;
         this.addressService = addressService;
@@ -74,6 +77,8 @@ public class IndexController {
         this.sortingOrder = sortingOrder;
         this.shoppingCartService = shoppingCartService;
         this.userService = userService;
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private void initShoppingCart() throws Exception {
@@ -189,7 +194,7 @@ public class IndexController {
     @RequestMapping(path = "/register", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public String signUp (Model model) {
-        String[] registeredUsernames = {"zhaba@gmail.com", "zhaba@hotmail.com"};
+        List<String> registeredUsernames = userService.getRegisteredUsernames();
         model.addAttribute("registeredUsernames", registeredUsernames);
         return "register";
     }
@@ -199,9 +204,17 @@ public class IndexController {
     @ResponseBody public String registerNewUser (@RequestBody String jsonUser) {
         Gson gson = new Gson();
         UserDto userDto = gson.fromJson(jsonUser, UserDto.class);
-        User user = new User(userDto.getUsername(), userDto.getPassword(), false, new Role("ROLE"));
+        Role userRole = roleService.findByName("ROLE");
+        if (userRole == null) {
+            userRole = new Role("USER");
+            roleService.save(userRole);
+        }
+        User user = new User(userDto.getUsername(), passwordEncoder.encode(userDto.getPassword()), false, userRole);
         userService.save(user);
 
+        // сформировать ссылку
+        String confirm = passwordEncoder.encode(user.getId().toString()+user.getUsername()+user.getPassword());
+        // отослать письмо с ссылкой
         return gson.toJson("success");
     }
 
