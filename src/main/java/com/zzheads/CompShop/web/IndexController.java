@@ -218,10 +218,10 @@ public class IndexController {
         // сформировать ссылку
         String confirm = passwordEncoder.encode(user.getId().toString()+user.getUsername()+user.getPassword());
         // отослать письмо с ссылкой
-        final String HOST_NAME = "http://localhost:8080";
+        final String HOST_NAME = "http://zdelivery.herokuapp.com";
         String body = "Для активации вашего аккаунта на сайте zdelivery.ru перейдите по ссылке ниже: \n"+
                 HOST_NAME+"/confirm?confirmString="+confirm;
-        MailApi.sendMail("zzheads@gmail.com", "www.zdelivery.ru", body, "Пожалуйста подтвердите ваш аккаунт на сайте zdelivery.ru");
+        MailApi.sendMail(user.getUsername(), "www.zdelivery.ru", body, "Пожалуйста подтвердите ваш аккаунт на сайте zdelivery.ru");
         return gson.toJson("success");
     }
 
