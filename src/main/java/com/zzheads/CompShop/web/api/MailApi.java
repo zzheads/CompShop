@@ -35,10 +35,9 @@ public class MailApi {
             message.setFrom(new InternetAddress(from)); // setting header fields
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             message.setSubject(subject); // subject line
-            message.setText(body);
+            message.setContent(body, "text/html; charset=UTF-8");
 
             Transport.send(message);
-            System.out.println("Email Sent successfully....");
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }

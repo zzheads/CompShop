@@ -5,6 +5,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.zzheads.CompShop.dto.UserDto;
 import com.zzheads.CompShop.model.*;
 import com.zzheads.CompShop.service.*;
+import com.zzheads.CompShop.utils.EmailTemplate;
 import com.zzheads.CompShop.utils.FlashMessage;
 import com.zzheads.CompShop.web.api.MailApi;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static com.zzheads.CompShop.dao.EmailProvidersRepository.getEmailProviders;
 
 @Controller
 @Scope ("request")
@@ -199,6 +202,7 @@ public class IndexController {
     public String signUp (Model model) {
         List<String> registeredUsernames = userService.getRegisteredUsernames();
         model.addAttribute("registeredUsernames", registeredUsernames);
+        model.addAttribute("emailProviders", getEmailProviders());
         return "register";
     }
 
@@ -218,10 +222,9 @@ public class IndexController {
         // сформировать ссылку
         String confirm = passwordEncoder.encode(user.getId().toString()+user.getUsername()+user.getPassword());
         // отослать письмо с ссылкой
-        final String HOST_NAME = "http://zdelivery.herokuapp.com";
-        String body = "Для активации вашего аккаунта на сайте zdelivery.ru перейдите по ссылке ниже: \n"+
-                HOST_NAME+"/confirm?confirmString="+confirm;
-        MailApi.sendMail(user.getUsername(), "www.zdelivery.ru", body, "Пожалуйста подтвердите ваш аккаунт на сайте zdelivery.ru");
+        String body = EmailTemplate.getHtmlCode(user.getUsername(), confirm);
+
+        MailApi.sendMail(user.getUsername(), "www.zdelivery.ru", body, "Пожалуйста активируйте ваш аккаунт на сайте zdelivery.ru");
         return gson.toJson("success");
     }
 
@@ -268,13 +271,14 @@ public class IndexController {
                 user.setEnabled(true);
                 userService.save(user);
                 model.addAttribute("username", user.getUsername());
-                model.addAttribute("password", user.getPassword()); // хрень, все равно он уже зашифрован
-                model.addAttribute("flash", new FlashMessage("Адрес электронной почты "+user.getUsername()+" успешно подтвержден.", FlashMessage.Status.SUCCESS));
+                model.addAttribute("password", ""); // хрень, все равно он уже зашифрован
+                model.addAttribute("flash", new FlashMessage("Учетная запись "+user.getUsername()+" активирована.", FlashMessage.Status.SUCCESS));
                 break;
             }
         }
         if (!model.containsAttribute("flash")) {
             model.addAttribute("flash", new FlashMessage("Ваша ссылка "+confirmString+" недействительна. Пользователь не найден.", FlashMessage.Status.FAILURE));
+            model.addAttribute("emailAgain", true);
         }
         return "login";
     }

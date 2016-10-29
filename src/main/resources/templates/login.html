@@ -7,7 +7,7 @@
 <div th:replace="layout::header-row"></div>
 <div th:replace="layout::flash"></div>
 
-<div class="container">
+<div th:if="${emailAgain==null}" class="container">
     <div class="row col s12">
         <div class="row col s8 offset-s2 white z-depth-3">
             <form action="/login" method="POST">
@@ -44,6 +44,29 @@
         </div>
     </div>
 </div>
+
+<div th:if="${emailAgain==true}" class="container">
+    <div class="row col s12">
+        <div class="row col s8 offset-s2 white z-depth-3">
+            <div class="row center teal-text text-darken-2">
+                <h5>Не получили письмо на почту?</h5>
+            </div>
+            <div class="row">
+                <div class="input-field col s6 offset-s3">
+                    <p>
+                        Для отправки письма со ссылкой активации аккаунта нажмите кнопку ниже:
+                    </p>
+                </div>
+            </div>
+            <div class="row center">
+                <br/>
+                <button type="submit" class="waves-effect waves-light btn" onclick="emailAgain()"><i class="material-icons right">send</i>Отправить</button>
+                <br/>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <footer th:replace="layout::footer"></footer>
 <div th:replace="layout::scripts"></div>

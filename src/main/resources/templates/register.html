@@ -9,8 +9,13 @@
 <div th:replace="layout::flash"></div>
 
 <meta th:each="registeredUsername, stat : ${registeredUsernames}" th:name="@{'registeredUsername #'+${stat.index}}" th:content="${registeredUsername}"/>
+<div th:each="emailProvider, stat : ${emailProviders}">
+    <meta th:name="@{'emailProviderSuffix #'+${stat.index}}" th:content="${emailProvider.suffix}"/>
+    <meta th:name="@{'emailProviderName #'+${stat.index}}" th:content="${emailProvider.name}"/>
+    <meta th:name="@{'emailProviderHost #'+${stat.index}}" th:content="${emailProvider.host}"/>
+</div>
 
-<div class="container">
+<div id="registrationForm" class="container">
     <div class="row col s12">
         <div class="row col s8 offset-s2 white z-depth-3">
 

@@ -85,107 +85,14 @@
     <div class="row col s12">
         <div class="row col s8 offset-s2 white z-depth-3">
 
-                <div class="row col s11 offset-s1 teal-text text-darken-2">
-                    <br/>
-                    <h5>Профиль пользователя: zzheads@gmail.com</h5>
-                </div>
-                <div class="row input-field col s5 offset-s1">
-                    <input id="password" type="email" class="validate" name="password"/>
-                    <label for="password">Новый пароль:</label>
-                </div>
-                <div class="row col s11 offset-s1 teal-text text-darken-2">
-                    <h5>Адрес доставки:</h5>
-                </div>
-                <div class="row">
-                    <div class="input-field col s5 offset-s1">
-                        <input id="firstName" type="text" class="validate" name="firstName" th:value="*{firstName}"/>
-                        <label for="firstName">Имя</label>
-                    </div>
-                <div class="input-field col s5">
-                    <input id="lastName" type="text" class="validate" name="lastName" th:value="*{lastName}"/>
-                    <label for="lastName">Фамилия</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s5 offset-s1">
-                    <select id="country" name="country">
-                        <option th:each="country : ${countries}" th:selected="${country == 'Россия'} ? 'selected' : ' ' " th:text="${country}" th:value="${country}">Россия</option>
-                    </select>
-                    <label for="country">Страна</label>
-                </div>
-                <div class="input-field col s5">
-                    <input id="zipCode" type="text" class="validate" name="zipCode"/>
-                    <label for="zipCode">Индекс</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s5 offset-s1">
-                    <select id="city" name="city">
-                        <option th:each="city : ${cities}" th:selected="${city == city_delivery} ? 'selected' : ' ' " th:text="${city}" th:value="${city}">Россия</option>
-                    </select>
-                    <label for="city">Город</label>
-                </div>
-                <div class="input-field col s5">
-                    <input id="street" type="text" class="validate" name="street"/>
-                    <label for="street">Улица</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s2 offset-s1">
-                    <input id="house" type="text" class="validate" name="house"/>
-                    <label for="house">Дом</label>
-                </div>
-                <div class="input-field col s2">
-                    <input id="room" type="text" class="validate" name="room"/>
-                    <label for="room">Квартира</label>
-                </div>
-                <div class="input-field col s5 offset-s1">
-                    <input id="phone" type="tel" class="validate" name="phone"/>
-                    <label for="phone">Телефон</label>
-                </div>
-            </div>
-
             <div class="row col s11 offset-s1 teal-text text-darken-2">
-                <h5>Реквизиты карты:</h5>
-            </div>
-            <div class="row">
-                <div class="input-field col s5 offset-s1">
-                    <input id="cardNumber" type="text" class="validate" name="cardNumber" th:value="*{lastName}"/>
-                    <label for="cardNumber">Номер</label>
-                </div>
-                <div class="input-field col s5">
-                    <input id="cardName" type="text" class="validate" name="cardName" th:value="*{firstName}"/>
-                    <label for="cardName">Имя владельца</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s2 offset-s1">
-                    <input id="cardMonth" type="text" class="validate" name="cardMonth"/>
-                    <label for="cardMonth">Месяц</label>
-                </div>
-                <div class="input-field col s2 offset-s1">
-                    <input id="cardYear" type="text" class="validate" name="cardYear"/>
-                    <label for="cardYear">Год</label>
-                </div>
-
-            </div>
-
-            <div class="row col s11 offset-s1 teal-text text-darken-2">
-                <h5>Добавить скан паспорта:</h5>
-            </div>
-
-            <div class="row col s8 offset-s1">
-                <form action="#">
-                    <div class="file-field input-field">
-                        <div class="btn">
-                            <span>File</span>
-                            <input type="file">
-                        </div>
-                        <div class="file-path-wrapper">
-                            <input class="file-path validate" type="text">
-                        </div>
-                    </div>
-                </form>
+                <br/>
+                <h5>Регистрация пользователя: zzheads@gmail.com</h5>
+                <p>
+                    <h6 class="black-text">На указаный вами адрес было отправлено письмо, для окончания регистрации перейдите по ссылке, указанной в письме.</h6>
+                    <h6 class="black-text">К своему почтовому ящику вы можете перейти по ссылке ниже:</h6>
+                    <a href="google.com">google.com</a>
+                </p>
             </div>
 
             <div class="row">
@@ -193,15 +100,15 @@
                     <button class="waves-effect waves-light btn teal lighten-3" type="reset" onclick="cansel()"><i class="material-icons right">not_interested</i>Отменить</button>
                 </div>
                 <div class="col s3">
-                    <button class="waves-effect waves-light btn teal darken-2" type="submit" onclick="saveProfile()"><i class="material-icons right">send</i>Сохранить</button>
+                    <button class="waves-effect waves-light btn teal darken-2" type="submit" onclick="saveProfile()"><i class="material-icons right">send</i>К почте</button>
                 </div>
                 <br/>
             </div>
 
-            </div>
         </div>
     </div>
 </div>
+
 
 
 
@@ -250,7 +157,7 @@
 <script src="../static/assets/scripts/formatDecimal.js"></script>
 <script src="../static/assets/scripts/flashMessage.js"></script>
 <script src="../static/assets/scripts/index.js"></script>
-
+<script src="../static/assets/scripts/draft.js"></script>
 <script>
     $(document).ready(function() {
         $('select').material_select();
