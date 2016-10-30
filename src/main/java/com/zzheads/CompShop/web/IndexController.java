@@ -265,20 +265,24 @@ public class IndexController {
 
     @RequestMapping(path = "/confirm", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public String confirmEmail (@RequestParam String confirmString, Model model) {
-        for (User user : userService.findAll()) {
-            if (passwordEncoder.matches(user.getId().toString()+user.getUsername()+user.getPassword(), confirmString)) {
-                user.setEnabled(true);
-                userService.save(user);
-                model.addAttribute("username", user.getUsername());
-                model.addAttribute("password", ""); // хрень, все равно он уже зашифрован
-                model.addAttribute("flash", new FlashMessage("Учетная запись "+user.getUsername()+" активирована.", FlashMessage.Status.SUCCESS));
-                break;
+    public String confirmEmail (@RequestParam String login, @RequestParam String confirmString, Model model) {
+        User user = userService.findByName(login);
+        if (user == null) { // пользователя нет в БД
+            model.addAttribute("flash", new FlashMessage("Пользователя "+login+" нет в базе данных.", FlashMessage.Status.FAILURE));
+        } else {
+            if (passwordEncoder.matches(user.getId().toString()+user.getUsername()+user.getPassword(), confirmString)) { // пользователь найдет, ссылка правильная - активируем аккаунт
+                if (!user.isEnabled()) {
+                    user.setEnabled(true);
+                    userService.save(user);
+                    model.addAttribute("flash", new FlashMessage("Учетная запись " + user.getUsername() + " активирована.", FlashMessage.Status.SUCCESS));
+                } else {
+                    model.addAttribute("flash", new FlashMessage("Учетная запись " + user.getUsername() + "  была активирована ранее.", FlashMessage.Status.SUCCESS));
+                }
+            } else { // пользователь есть - ссылка неверная
+                model.addAttribute("flash", new FlashMessage("Ваша ссылка " + confirmString + " недействительна. Пользователь не найден.", FlashMessage.Status.FAILURE));
+                model.addAttribute("emailAgain", true);
             }
-        }
-        if (!model.containsAttribute("flash")) {
-            model.addAttribute("flash", new FlashMessage("Ваша ссылка "+confirmString+" недействительна. Пользователь не найден.", FlashMessage.Status.FAILURE));
-            model.addAttribute("emailAgain", true);
+            model.addAttribute("username", user.getUsername());
         }
         return "login";
     }
