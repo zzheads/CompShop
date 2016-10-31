@@ -22,6 +22,12 @@ public class ShoppingCartApi {
         this.shoppingCart = shoppingCart;
     }
 
+    @RequestMapping(path = "/shoppingcart", method = RequestMethod.GET, produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody String getShoppingCart() {
+        return shoppingCart.toJson();
+    }
+
     @RequestMapping(path = "/purchases", method = RequestMethod.GET, produces = {"application/json"}, consumes = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody String getPurchases() {

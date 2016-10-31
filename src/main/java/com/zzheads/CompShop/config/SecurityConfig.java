@@ -80,7 +80,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private AuthenticationFailureHandler loginFailureHandler() {
         return (request, response, exception) -> {
-            request.getSession().setAttribute("flash", new FlashMessage(exception.getMessage(), FlashMessage.Status.FAILURE));
+            String message = "";
+            switch (exception.getMessage()) {
+                case "Bad credentials":
+                    message = " Неверное имя пользователя (email) и/или пароль.";
+                    break;
+                default: message = exception.getLocalizedMessage();
+            }
+            request.getSession().setAttribute("flash", new FlashMessage(message, FlashMessage.Status.FAILURE));
             response.sendRedirect("/login");
         };
     }

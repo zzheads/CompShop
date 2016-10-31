@@ -1,9 +1,14 @@
 package com.zzheads.CompShop.model;
 
-import com.zzheads.CompShop.utils.Maths;
+import com.google.gson.*;
+import com.zzheads.CompShop.model.packing.Box;
+import com.zzheads.CompShop.model.packing.Container;
+import com.zzheads.CompShop.model.packing.Dimension;
+import com.zzheads.CompShop.model.packing.Packager;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,12 +134,6 @@ public class ShoppingCart {
         return result;
     }
 
-    public double totalVolumeWeight() {
-        if (purchases == null) return 0;
-        double weight = Maths.volumePack(getAllProducts())/5000;
-        return weight;
-    }
-
     public double totalVolume() {
         if (purchases == null) return 0;
         double volume = 0.0;
@@ -144,7 +143,59 @@ public class ShoppingCart {
         return volume;
     }
 
+    public String getDimensions () {
+        if (purchases == null) return "";
+        List<Box> boxes = new ArrayList<>();
+        int maxLength = 0;
+        int maxWidth = 0;
+        int totalHeight = 0;
+        for (Purchase purchase : purchases) {
+            if ((int) Math.round(purchase.getProduct().getLengthInCm())>maxLength)
+                maxLength = (int) Math.round(purchase.getProduct().getLengthInCm());
+            if ((int) Math.round(purchase.getProduct().getWidthInCm())>maxWidth)
+                maxWidth = (int) Math.round(purchase.getProduct().getWidthInCm());
+            totalHeight += (int) Math.round(purchase.getProduct().getHeightInCm()*purchase.getQuantity());
+
+            for (int i=0;i<purchase.getQuantity();i++) {
+                boxes.add(new Box(
+                        purchase.getProduct().getName(),
+                        (int) Math.round(purchase.getProduct().getHeightInCm()),
+                        (int) Math.round(purchase.getProduct().getLengthInCm()),
+                        (int) Math.round(purchase.getProduct().getWidthInCm())));
+            }
+        }
+        List<Dimension> containers = new ArrayList<>();
+        for (int height = 5;height<=totalHeight;height++) {
+            containers.add(new Dimension(maxLength, maxWidth, height));
+        }
+        Packager packager = new Packager(containers);
+        Container container = packager.pack(boxes);
+        return container.getDepth()+"x"+container.getWidth()+"x"+container.getHeight()+" cm";
+    }
+
+    public String getWeight () {
+        return Double.toString(totalWeight())+" kg";
+    }
+
     public double deliveryCost() {
         return totalWeight()*deliveryCostPerKg;
+    }
+
+    private static class ShoppingCartSerializer implements JsonSerializer<ShoppingCart> {
+        @Override
+        public JsonElement serialize(ShoppingCart src, Type typeOfSrc, JsonSerializationContext context) {
+            Purchase.ListPurchaseSerializer listPurchaseSerializer = new Purchase.ListPurchaseSerializer();
+            JsonObject result = new JsonObject();
+            if (src.getPurchases() != null)
+                result.add("purchases", listPurchaseSerializer.serialize(src.getPurchases(), List.class, context));
+            result.addProperty("dimensions", src.getDimensions());
+            result.addProperty("weight", src.getWeight());
+            return result;
+        }
+    }
+
+    public String toJson () {
+        Gson gson = new GsonBuilder().registerTypeAdapter(ShoppingCart.class, new ShoppingCartSerializer()).create();
+        return gson.toJson(this, ShoppingCart.class);
     }
 }

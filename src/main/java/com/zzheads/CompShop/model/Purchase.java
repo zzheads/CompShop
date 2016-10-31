@@ -52,7 +52,7 @@ public class Purchase {
         return null;
     }
 
-    private static class PurchaseSerializer implements JsonSerializer<Purchase> {
+    public static class PurchaseSerializer implements JsonSerializer<Purchase> {
         @Override
         public JsonElement serialize(Purchase src, Type typeOfSrc, JsonSerializationContext context) {
             Product.ProductSerializer productSerializer = new Product.ProductSerializer();
@@ -63,7 +63,7 @@ public class Purchase {
         }
     }
 
-    private static class ListPurchaseSerializer implements JsonSerializer<List<Purchase>> {
+    public static class ListPurchaseSerializer implements JsonSerializer<List<Purchase>> {
         @Override
         public JsonElement serialize(List<Purchase> src, Type typeOfSrc, JsonSerializationContext context) {
             if (src != null) {

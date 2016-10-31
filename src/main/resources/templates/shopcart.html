@@ -10,21 +10,104 @@
 
 <div class="container">
 
-    <div class="row col s12">
+    <div id="shoppingCart!" class="row white">
+        <div class="row col s12">
+            <h5>Корзина</h5>
+            <ul class="collapsible with-header white" data-collapsible="expandable">
+                <!--<li>-->
+                    <!--<div class="collapsible-header">-->
+                        <!--<h5>Корзина</h5>-->
+                    <!--</div>-->
+                <!--</li>-->
+                <li th:each="purchase, stat : ${shoppingCart.purchases}">
 
-        <div class="fixed-action-btn horizontal" style="top: 15%; right: 0%;">
-            <a href="/checkout" class="btn-large red valign-wrapper">
-                <i class="large material-icons valign left">shop</i><span id="makePuchaseButton" th:text="@{'Оплатить '+${#arrays.length(purchases)}+' на сумму '+${#numbers.formatDecimal(total,1,'POINT',0,'COMMA')}+' руб'}"></span>
-            </a>
+                    <div class="collapsible-header grey-text text-darken-3 col s12">
+                        <div class="col s8" th:inline="text">
+                            <i class="material-icons">list</i>
+                            [[${#strings.length(purchase.product.name)>70 ? #strings.substring(purchase.product.name, 0, 70) : purchase.product.name}]]
+                        </div>
+                        <div class="col s3">
+                            <div class="right grey-text text-lighten-1">
+                                <span th:text="${purchase.quantity}"></span>
+                                <span> на сумму </span>
+                                <span th:text="@{${#numbers.formatDecimal(purchase.product.retailPrice*dollar_rate*amazon_percent*purchase.quantity,1,'POINT',0,'COMMA')}+' '}"></span>
+                                <span>руб</span>
+                            </div>
+                        </div>
+                        <div class="col s1 right">
+                            <i th:id="@{'deleteButton #'+${purchase.product.id}}" class="material-icons right" onclick="deleteProductFromCart(this.id)">not_interested</i>
+                        </div>
+                    </div>
+
+                    <div class="collapsible-body white grey-text">
+                        <div class="row col s12">
+                            <br/>
+                            <div class="col s3 valign-wrapper">
+                                <img th:src="${purchase.product.largeImage}" class="materialboxed valign left" width="100%"/>
+                            </div>
+                            <div class="col s5">
+                                <div class="row">
+                                    <div class="chip teal lighten-3 left" th:text="@{'asin: '+${purchase.product.asin}}"></div>
+                                </div>
+                                <div class="row no-margin">
+                                    <blockquote th:text="${purchase.product.description}"></blockquote>
+                                </div>
+                                <div class="row no-margin">
+                                    <div class="chip" th:text="@{'Размеры: '+${purchase.product.length}+'x'+${purchase.product.width}+'x'+${purchase.product.height}+' '+${purchase.product.unitsL}}"></div>
+                                </div>
+                                <div class="row no-margin">
+                                    <div class="chip" th:text="@{'Вес: '+${purchase.product.weight}+' '+${purchase.product.unitsW}}"></div>
+                                </div>
+                                <div class="row no-margin">
+                                    <div class="chip" th:text="@{'Категория: '+${purchase.product.category.name}}"></div>
+                                </div>
+                                <div class="row no-margin">
+                                    <div class="chip" th:text="@{'Продавец: '+${purchase.product.supplier.name}}"></div>
+                                </div>
+                            </div>
+                            <div class="col s3 right">
+                                <div class="row no-margin right">
+                                    <span>Цена: </span>
+                                    <span th:text="${#numbers.formatDecimal(purchase.product.retailPrice*dollar_rate*amazon_percent,1,'POINT',0,'COMMA')}" class="red-text"></span>
+                                    <span>руб</span>
+                                </div>
+                                <div class="row col s2 no-margin right">
+                                    <input th:value="${purchase.quantity}" th:id="@{'quantityItems #'+${purchase.product.id}}" type="number" class="validate" oninput="updateCart(this.id)"/>
+                                </div>
+                                <div class="row no-margin right">
+                                    <span>Сумма: </span>
+                                    <span th:text="${#numbers.formatDecimal(purchase.product.retailPrice*dollar_rate*amazon_percent*purchase.quantity,1,'POINT',0,'COMMA')}" class="red-text"></span>
+                                    <span>руб</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </li>
+                <li>
+                    <div class="collapsible-header grey-text text-darken-3 col s12">
+                        <span th:text="@{'Доставка до: '+${shoppingCart.city}}"></span>
+                    </div>
+                    <div class="collapsible-body grey-text">
+                        <div class="row col s12">
+                            <div class="chip" th:text="@{'Размеры: '+${shoppingCart.dimensions}}"></div>
+                            <div class="chip" th:text="@{'Вес: '+${shoppingCart.weight}}"></div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="collapsible-header grey-text text-darken-3 col s12">
+                        <br/>
+                        <a href="/checkout" class="btn red valign-wrapper right">
+                            <i class="large material-icons valign left">shop</i><span id="makePuchaseButton" th:text="@{'Оплатить '+${#arrays.length(shoppingCart.purchases)}+' на сумму '+${#numbers.formatDecimal(total,1,'POINT',0,'COMMA')}+' руб'}"></span>
+                        </a>
+                        <br/>
+                    </div>
+                </li>
+            </ul>
         </div>
-
     </div>
 
-    <div th:id="@{'purchaseCard #'+${purchase.product.id}}" th:each="purchase : ${purchases}">
-        <div th:each="product : ${purchase.product}">
-            <div th:replace="layout::product-detail-row"></div>
-        </div>
-    </div>
 </div>
 
 <footer th:replace="layout :: footer-row"></footer>
@@ -32,7 +115,7 @@
 <div th:replace="layout :: scripts"></div>
 <script src="../assets/scripts/formatDecimal.js"></script>
 <script src="../assets/scripts/flashMessage.js"></script>
-<script src="../assets/scripts/index.js"></script>
+<script src="../assets/scripts/shopcart.js"></script>
 <script>$(document).ready(function() {$('select').material_select();});</script>
 </body>
 </html>

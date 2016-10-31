@@ -225,13 +225,13 @@
 </div>
 
 <div id="flashMessage" th:fragment="flash" class="container">
-    <div th:if="${flash != null}" class="row col s12">
-            <div th:classappend="${#strings.toLowerCase(flash.status)}" class="flash">
-                <p th:inline="text">
-                    <a href="#"><span onclick="clearFlash()" class="flashspan"> [X] </span></a>
+    <div th:if="${flash != null}" class="row col s12 center">
+        <div th:classappend="${#strings.toLowerCase(flash.status)}" class="flash">
+            <p th:inline="text">
+                <a href="#"><span onclick="clearFlash()" class="flashspan"> [X] </span></a>
                     [[@{' '+${flash.message}}]]
-                </p>
-            </div>
+            </p>
+        </div>
     </div>
 </div>
 
@@ -277,6 +277,7 @@
     <script src="../assets/scripts/jquery-1.12.4.min.js"></script>
     <script src="../assets/scripts/materialize.js"></script>
     <script src="../assets/scripts/init.js"></script>
+    <script src="../assets/scripts/flashMessage.js" type="text/javascript" charset="utf-8"></script>
 </div>
 
 </body>

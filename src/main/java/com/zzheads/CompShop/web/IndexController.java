@@ -175,7 +175,7 @@ public class IndexController {
     @RequestMapping(path = "/shoppingcart", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public String shoppingCart (Model model) {
-        model.addAttribute("purchases", shoppingCart.getPurchases());
+        model.addAttribute("shoppingCart", shoppingCart);
         return "shopcart";
     }
 
